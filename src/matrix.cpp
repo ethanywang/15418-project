@@ -11,33 +11,32 @@ int Matrix::size() {
 int Matrix::size(int dim) {
     switch (dim) {
         case 0:
-            return this->_M;
+            return _M;
         case 1:
-            return this->_N;
+            return _N;
         default:
             throw dim;
     }
 }
 
 Matrix Matrix::T() {
-    double *data = new double[this->_size];
+    if (_size == 0) {
+        return Matrix();
+    }
+    auto *data = new double[this->_size];
+    auto M = _N;
+    auto N = _M;
 
-    for (int i = 0; i < this->_M; i++) {
-        for (int j = 0; j < this->_N; j++) {
-            data[j * this->_M + i] = this->_data[i * this->_N + j];
+    for (int i = 0; i < _M; i++) {
+        for (int j = 0; j < _N; j++) {
+            data[j * _M + i] = this->_data[i * _N + j];
         }
     }
-    delete this->_data;
 
-    this->_data = data;
-    int old_M = this->_M;
-    this->_M = this->_N;
-    this->_N = old_M;
-
-    return *this;
+    return Matrix(data, M, N);
 }
 
-Matrix Matrix::add(Matrix d) {
+Matrix Matrix::add(Matrix &d) {
     assert(_M == d._M);
     assert(_N == d._N);
 
@@ -51,7 +50,7 @@ Matrix Matrix::add(Matrix d) {
     return Matrix(data, _M, _N);
 }
 
-Matrix Matrix::dot(Matrix d) {
+Matrix Matrix::dot(Matrix &d) {
     assert(_M == d._M);
     assert(_N == d._N);
 
@@ -65,7 +64,7 @@ Matrix Matrix::dot(Matrix d) {
     return Matrix(data, _M, _N);
 }
 
-Matrix Matrix::mul(Matrix d) {
+Matrix Matrix::mul(Matrix &d) {
     /* assert dimension */
     assert(_N == d._M);
 

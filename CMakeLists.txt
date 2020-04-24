@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # set the project name
 project(RNN)
 
+# set debug mode
+set(CMAKE_BUILD_TYPE Debug)
+
 # specify the C++ standard
 if (CMAKE_VERSION VERSION_LESS "3.1")
         if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

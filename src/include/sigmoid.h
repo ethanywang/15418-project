@@ -9,12 +9,9 @@
 
 class Sigmoid {
 public:
-    Sigmoid() : res(1, 1) {};
-
     Matrix forward(Matrix);
-
 private:
-    Matrix res;
+    Matrix _res;
 };
 
 

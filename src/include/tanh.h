@@ -9,12 +9,9 @@
 
 class Tanh {
 public:
-    Tanh() : res(1, 1) {};
-
     Matrix forward(Matrix);
-
 private:
-    Matrix res;
+    Matrix _res;
 };
 
 

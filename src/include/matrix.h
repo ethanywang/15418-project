@@ -43,9 +43,7 @@ public:
     }
 
     ~Matrix() {
-        if (_data != nullptr) {
-            delete[] _data;
-        }
+        delete[] _data;
     };
 
     int size();
@@ -54,11 +52,11 @@ public:
 
     Matrix T();
 
-    Matrix add(Matrix);
+    Matrix add(Matrix &);
 
-    Matrix mul(Matrix);
+    Matrix mul(Matrix &);
 
-    Matrix dot(Matrix);
+    Matrix dot(Matrix &);
 
     double *data();
 
