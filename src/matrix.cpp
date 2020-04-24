@@ -3,14 +3,15 @@
 //
 
 #include <matrix.h>
-#include <iostream>
+#include <cstring>
 
 Matrix &Matrix::operator=(const Matrix &m) {
-    cout << "Here" << endl;
     if (&m == this) {
         return *this;
     }
-    this->_data = m._data;
+    this->_data = new double[m._size];
+    memcpy(this->_data, m._data, m._size*sizeof(double));
+
     this->_M = m._M;
     this->_N = m._N;
     this->_size = m._size;
@@ -66,7 +67,6 @@ Matrix Matrix::add(Matrix &d) {
 }
 
 Matrix Matrix::dot(Matrix &d) {
-    cout << _M << " " << d._M << " " << _N << " " << d._N << endl;
     assert(_M == d._M);
     assert(_N == d._N);
 

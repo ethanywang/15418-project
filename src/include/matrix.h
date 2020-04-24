@@ -19,11 +19,11 @@ public:
     Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N) {
         assert(M > 0);
         assert(N > 0);
-        _data = new double[_size];
+        _data = new double[_size]();
         if (!zero) {
             random_device rd;
             for (int i = 0; i < _size; i++) {
-                _data[i] = rd();
+                _data[i] = static_cast<double>(rd());
             }
         }
     }

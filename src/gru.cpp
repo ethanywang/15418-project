@@ -10,11 +10,12 @@ Matrix GRU::forward(Matrix &x, Matrix &h) {
 
     auto tmp1 = this->Wzx.mul(x);
     auto tmp2 = this->Wrx.mul(x);
-    auto tmp3 = this->r_t.dot(h_t_1);
-    auto tmp4 = this->Wx.mul(x);
 
     this->z_t = this->z_act.forward(this->Wzh.mul(h_t_1).add(tmp1));
     this->r_t = this->r_act.forward(this->Wrh.mul(h_t_1).add(tmp2));
+
+    auto tmp3 = this->r_t.dot(h_t_1);
+    auto tmp4 = this->Wx.mul(x);
     this->h_bar_t = this->h_act.forward(this->Wh.mul(tmp3).add(tmp4));
 
     auto tmp5 = this->z_t.dot(this->h_bar_t);

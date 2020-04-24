@@ -6,6 +6,7 @@ project(RNN)
 
 # set debug mode
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
 # specify the C++ standard
 if (CMAKE_VERSION VERSION_LESS "3.1")
