@@ -103,3 +103,25 @@ double *Matrix::data() {
     return _data;
 }
 
+Matrix &Matrix::operator-() {
+    for (int i = 0; i < _size; i++) {
+        _data[i] = -_data[i];
+    }
+    return *this;
+}
+
+Matrix &Matrix::operator-(const double &num) {
+    for (int i = 0; i < _size; i++) {
+        _data[i] -= num;
+    }
+    return *this;
+}
+
+Matrix &Matrix::operator+(const double &num) {
+    for (int i = 0; i < _size; i++) {
+        _data[i] += num;
+    }
+    return *this;
+}
+
+mt19937_64 Matrix::_rd = mt19937_64(0);

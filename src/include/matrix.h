@@ -5,10 +5,10 @@
 #ifndef RNN_DATA_H
 #define RNN_DATA_H
 
-#include <vector>
 #include <random>
 #include <cassert>
 #include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -21,9 +21,9 @@ public:
         assert(N > 0);
         _data = new double[_size]();
         if (!zero) {
-            random_device rd;
+//            random_device rd;
             for (int i = 0; i < _size; i++) {
-                _data[i] = static_cast<double>(rd());
+                _data[i] = static_cast<double>(_rd());
             }
         }
     }
@@ -46,6 +46,9 @@ public:
         delete[] _data;
     };
 
+    Matrix &operator-();
+    Matrix &operator-(const double &);
+    Matrix &operator+(const double &);
     Matrix &operator=(const Matrix &);
 
     int size();
@@ -67,6 +70,8 @@ private:
     int _N;
     int _size;
     double *_data;
+
+    static mt19937_64 _rd;
 };
 
 
