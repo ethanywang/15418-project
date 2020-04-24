@@ -46,6 +46,8 @@ public:
         delete[] _data;
     };
 
+    Matrix &operator=(const Matrix &);
+
     int size();
 
     int size(int dim);

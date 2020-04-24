@@ -4,7 +4,6 @@
 
 #include <gru.h>
 
-
 Matrix GRU::forward(Matrix &x, Matrix &h) {
     this->h_t_1 = h;
     this->x = x;

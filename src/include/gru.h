@@ -34,7 +34,7 @@ public:
 
     ~GRU() {};
 
-    Matrix forward(Matrix &x, Matrix &h);
+    Matrix forward(Matrix &, Matrix &);
 
 private:
     int d;

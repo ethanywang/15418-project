@@ -3,6 +3,21 @@
 //
 
 #include <matrix.h>
+#include <iostream>
+
+Matrix &Matrix::operator=(const Matrix &m) {
+    cout << "Here" << endl;
+    if (&m == this) {
+        return *this;
+    }
+    this->_data = m._data;
+    this->_M = m._M;
+    this->_N = m._N;
+    this->_size = m._size;
+
+    return *this;
+}
+
 
 int Matrix::size() {
     return _size;
@@ -51,6 +66,7 @@ Matrix Matrix::add(Matrix &d) {
 }
 
 Matrix Matrix::dot(Matrix &d) {
+    cout << _M << " " << d._M << " " << _N << " " << d._N << endl;
     assert(_M == d._M);
     assert(_N == d._N);
 
@@ -71,8 +87,8 @@ Matrix Matrix::mul(Matrix &d) {
     /* do calculation */
     auto *data = new double[_M * d._N]();
     for (int i = 0; i < _M; i++) {
-        for (int j = 0; i < d._N; j++) {
-            for (int k = 0; k < _N; j++) {
+        for (int j = 0; j < d._N; j++) {
+            for (int k = 0; k < _N; k++) {
                 data[i * d._N + j] +=
                         _data[i * _N + k] * d._data[k * d._N + j];
             }
