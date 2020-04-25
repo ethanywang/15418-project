@@ -5,11 +5,15 @@
 #ifndef RNN_TANH_H
 #define RNN_TANH_H
 
-#include <matrix.h>
+#include "matrix.h"
 
 class Tanh {
 public:
     Matrix forward(Matrix);
+
+    Matrix operator()(const Matrix &mat) {
+        return this->forward(mat);
+    }
 private:
     Matrix _res;
 };

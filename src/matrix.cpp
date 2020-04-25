@@ -103,25 +103,28 @@ double *Matrix::data() {
     return _data;
 }
 
-Matrix &Matrix::operator-() {
+Matrix Matrix::operator-() const {
+    auto *data = new double[_size];
     for (int i = 0; i < _size; i++) {
-        _data[i] = -_data[i];
+        data[i] = -_data[i];
     }
-    return *this;
+    return Matrix(data, _M, _N);
 }
 
-Matrix &Matrix::operator-(const double &num) {
+Matrix Matrix::operator-(const double &num) const {
+    auto *data = new double[_size];
     for (int i = 0; i < _size; i++) {
-        _data[i] -= num;
+        data[i] = _data[i] - num;
     }
-    return *this;
+    return Matrix(data, _M, _N);
 }
 
-Matrix &Matrix::operator+(const double &num) {
+Matrix Matrix::operator+(const double &num) const {
+    auto *data = new double[_size];
     for (int i = 0; i < _size; i++) {
-        _data[i] += num;
+        data[i] = data[i] + num;
     }
-    return *this;
+    return Matrix(data, _M, _N);
 }
 
 mt19937_64 Matrix::_rd = mt19937_64(0);

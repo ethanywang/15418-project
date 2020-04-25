@@ -21,7 +21,6 @@ public:
         assert(N > 0);
         _data = new double[_size]();
         if (!zero) {
-//            random_device rd;
             for (int i = 0; i < _size; i++) {
                 _data[i] = static_cast<double>(_rd());
             }
@@ -46,9 +45,9 @@ public:
         delete[] _data;
     };
 
-    Matrix &operator-();
-    Matrix &operator-(const double &);
-    Matrix &operator+(const double &);
+    Matrix operator-() const;
+    Matrix operator-(const double &) const;
+    Matrix operator+(const double &) const;
     Matrix &operator=(const Matrix &);
 
     int size();

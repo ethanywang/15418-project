@@ -5,9 +5,10 @@
 #ifndef RNN_GRU_H
 #define RNN_GRU_H
 
-#include <matrix.h>
-#include <sigmoid.h>
-#include <tanh.h>
+#include "matrix.h"
+#include "sigmoid.h"
+#include "tanh.h"
+
 #include <random>
 #include <cassert>
 

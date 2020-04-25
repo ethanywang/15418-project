@@ -5,11 +5,15 @@
 #ifndef RNN_SIGMOID_H
 #define RNN_SIGMOID_H
 
-#include <matrix.h>
+#include "matrix.h"
 
 class Sigmoid {
 public:
     Matrix forward(Matrix);
+
+    Matrix operator()(const Matrix &mat) {
+        return this->forward(mat);
+    }
 private:
     Matrix _res;
 };

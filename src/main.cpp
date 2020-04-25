@@ -3,11 +3,16 @@
 //
 
 #include <gru.h>
+#include <lstm.h>
 
 int main(int argc, char **argv) {
     GRU gru(10, 20);
-    Matrix input_x = Matrix(10, 1);
-    Matrix h = Matrix(20, 1);
-    Matrix output = gru.forward(input_x, h);
+    Matrix input_x(10, 1);
+    Matrix h(20, 1);
+    Matrix output1 = gru.forward(input_x, h);
+
+//    LSTM lstm(10, 20);
+//    Matrix C(20, 1);
+//    Matrix output2 = lstm.forward(input_x, h, C);
     return 0;
 }

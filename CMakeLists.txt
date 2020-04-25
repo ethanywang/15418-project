@@ -27,7 +27,8 @@ set(SRC_FILES
         src/sigmoid.cpp
         src/tanh.cpp
         src/matrix.cpp
-        src/lstm.cpp)
+        src/lstm.cpp
+        )
 
 # add the executable
 add_executable(rnn ${SRC_FILES})
