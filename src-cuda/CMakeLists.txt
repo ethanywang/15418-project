@@ -1,7 +1,10 @@
 # set cuda mode
+enable_language(CUDA)
+
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_61,code=sm_61;)
-find_package(CUDA REQUIRED)
 set(EXTRA_LIBS ${EXTRA_LIBS} gpu)
+
+find_package(CUDA REQUIRED)
 
 # set include directories
 include_directories(include)
