@@ -46,8 +46,11 @@ public:
     };
 
     Matrix operator-() const;
+
     Matrix operator-(const double &) const;
+
     Matrix operator+(const double &) const;
+
     Matrix &operator=(const Matrix &);
 
     int size();

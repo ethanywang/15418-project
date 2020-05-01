@@ -14,6 +14,7 @@ public:
     Matrix operator()(const Matrix &mat) {
         return this->forward(mat);
     }
+
 private:
     Matrix _res;
 };

@@ -10,7 +10,7 @@ Matrix &Matrix::operator=(const Matrix &m) {
         return *this;
     }
     this->_data = new double[m._size];
-    memcpy(this->_data, m._data, m._size*sizeof(double));
+    memcpy(this->_data, m._data, m._size * sizeof(double));
 
     this->_M = m._M;
     this->_N = m._N;

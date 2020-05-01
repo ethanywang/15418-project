@@ -1,12 +1,10 @@
 //
 // Created by yuwang4 on 2020-04-20.
 //
-#include <iostream>
 #include <gru.h>
 #include <lstm.h>
 
 int main(int argc, char **argv) {
-    std::
     GRU gru(10, 20);
     Matrix input_x(10, 1);
     Matrix h(20, 1);
