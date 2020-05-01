@@ -1,7 +1,6 @@
 //
 // Created by yuwang4 on 2020-04-20.
 //
-
 #include <gru.h>
 #include <lstm.h>
 
