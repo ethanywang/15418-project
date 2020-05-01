@@ -18,5 +18,5 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
 # include subdirectories
-add_subdirectory(src-seq)
-#add_subdirectory(src-cuda)
+#add_subdirectory(src-seq)
+add_subdirectory(src-cuda)

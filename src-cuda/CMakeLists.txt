@@ -1,10 +1,10 @@
 # set cuda mode
-enable_language(CUDA)
+# enable_language(CUDA) - not supported before cmake 2.8
+find_package(CUDA REQUIRED)
 
+set(CMAKE_CUDA_COMPILER  /usr/local/depot/cuda/bin/nvcc)
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};-gencode arch=compute_61,code=sm_61;)
 set(EXTRA_LIBS ${EXTRA_LIBS} gpu)
-
-find_package(CUDA REQUIRED)
 
 # set include directories
 include_directories(include)

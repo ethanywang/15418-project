@@ -5,7 +5,7 @@
 __constant__ float cuData[MAXSIZE];
 
 CudaOperator::setup(int size, double* data) {
-    cout<<"cuda setup\n";
+    cout<<"cuda setup...\n";
     cudaMemcpy(cuData, data, sizeof(double) * size, cudaMemcpyHostToDevice);
 }
 
