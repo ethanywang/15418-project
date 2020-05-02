@@ -21,7 +21,7 @@ public:
         _dev = SEQ; 
     };
 
-    Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N) {
+    Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N), _cu() {
         assert(M > 0);
         assert(N > 0);
         _data = new double[_size]();
@@ -32,7 +32,7 @@ public:
         }
     }
 
-    Matrix(int M, int N, Device device) : _M(M), _N(N), _size(M * N), _dev(device) {
+    Matrix(int M, int N, Device device) : _M(M), _N(N), _size(M * N), _dev(device), _cu() {
         assert(M > 0);
         assert(N > 0);
         _data = new double[_size]();
@@ -80,15 +80,15 @@ public:
 
     double *data();
 
+    // CUDA
+    CudaOperator *_cu; 
+    Device _dev;
+
 private:
     int _M;
     int _N;
     int _size;
     double *_data;
-
-    // CUDA
-    CudaOperator *_cu; 
-    Device _dev;
     static mt19937_64 _rd;
 };
 

@@ -79,10 +79,16 @@ Matrix Matrix::dot(Matrix &d) {
     assert(_N == d._N);
 
     auto *data = new double[_size];
-    for (int i = 0; i < _M; i++) {
-        for (int j = 0; j < _N; j++) {
-            data[i * _N + j] = _data[i * _N + j] * d._data[i * _N + j];
+    if (this->_dev == SEQ) {
+        for (int i = 0; i < _M; i++) {
+            for (int j = 0; j < _N; j++) {
+                data[i * _N + j] = _data[i * _N + j] * d._data[i * _N + j];
+            }
         }
+    }
+
+    if (this->_dev == GPU) {
+        this->_cu->cuDot(_data, d._data, data, _M, _N);
     }
 
     return Matrix(data, _M, _N);
@@ -94,15 +100,20 @@ Matrix Matrix::mul(Matrix &d) {
 
     /* do calculation */
     auto *data = new double[_M * d._N]();
-    for (int i = 0; i < _M; i++) {
-        for (int j = 0; j < d._N; j++) {
-            for (int k = 0; k < _N; k++) {
-                data[i * d._N + j] +=
-                        _data[i * _N + k] * d._data[k * d._N + j];
+    if (this->_dev == SEQ) {
+        for (int i = 0; i < _M; i++) {
+            for (int j = 0; j < d._N; j++) {
+                for (int k = 0; k < _N; k++) {
+                    data[i * d._N + j] +=
+                            _data[i * _N + k] * d._data[k * d._N + j];
+                }
             }
         }
     }
 
+    if (this->_dev == GPU) {
+        this->_cu->cuMul(_data, d._data, data, _M, _N);
+    }
     /* allocate new data */
     return Matrix(data, _M, d._N);
 }
