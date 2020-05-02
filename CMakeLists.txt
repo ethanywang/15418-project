@@ -1,6 +1,10 @@
 # set the minimum cmake version
 cmake_minimum_required(VERSION 2.8)
 
+# Alternatively, set gcc/g++
+#set(CMAKE_C_COMPILER "gcc")
+#set(CMAKE_CXX_COMPILER "g++")
+
 # set the project name
 project(RNN)
 
@@ -13,10 +17,14 @@ else ()
     set (CMAKE_CXX_STANDARD 11)
 endif ()
 
+# set common flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -m64 -Wall -mavx2")
+
 # set debug mode
-set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
 # include subdirectories
 add_subdirectory(src-seq)
 #add_subdirectory(src-cuda)
+add_subdirectory(src-ispc)
