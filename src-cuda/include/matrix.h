@@ -38,9 +38,7 @@ public:
         _data = new double[_size]();
         std::cout<<"constructor cuda\n";
         if (device == GPU) {
-            std::cout<<"cuda setup\n";
             _cu = new CudaOperator();
-            _cu->setup(_size, _data);
         }
     }
 

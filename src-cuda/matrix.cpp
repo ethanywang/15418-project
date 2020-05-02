@@ -56,11 +56,19 @@ Matrix Matrix::add(Matrix &d) {
     assert(_M == d._M);
     assert(_N == d._N);
 
+    // seq
     auto *data = new double[_size];
-    for (int i = 0; i < _M; i++) {
-        for (int j = 0; j < _N; j++) {
-            data[i * _N + j] = _data[i * _N + j] + d._data[i * _N + j];
+    if (this->_dev == SEQ) {
+        for (int i = 0; i < _M; i++) {
+            for (int j = 0; j < _N; j++) {
+                data[i * _N + j] = _data[i * _N + j] + d._data[i * _N + j];
+            }
         }
+    }
+
+    // cuda-parallel
+    if (this->_dev == GPU) {
+        this->_cu->cuAdd(_data, d._data, data, _M, _N);
     }
 
     return Matrix(data, _M, _N);
