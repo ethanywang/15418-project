@@ -2,7 +2,7 @@
 // Created by yuwang on 4/24/20.
 //
 
-#include <lstm.h>
+#include "lstm.h"
 
 Matrix LSTM::forward(Matrix &x, Matrix &h, Matrix &c_t_1, Matrix &c_t) {
     this->h_t_1 = h;

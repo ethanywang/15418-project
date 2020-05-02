@@ -2,7 +2,8 @@
 // Created by yuwang on 2020-04-22.
 //
 
-#include <matrix.h>
+#include "matrix.h"
+
 #include <cstring>
 
 Matrix &Matrix::operator=(const Matrix &m) {

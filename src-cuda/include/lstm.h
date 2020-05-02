@@ -29,9 +29,10 @@ public:
             c_act()
 //            c_t_1(hidden_dim, hidden_dim)
     {};
+
     ~LSTM() {};
 
-    Matrix forward(Matrix &, Matrix &, Matrix&, Matrix &);
+    Matrix forward(Matrix &, Matrix &, Matrix &, Matrix &);
 
 private:
     int d;

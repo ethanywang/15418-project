@@ -2,10 +2,10 @@
 // Created by yuwang on 2020-04-21.
 //
 
-#include <tanh.h>
+#include "tanh.h"
 
 Matrix Tanh::forward(Matrix m) {
-    auto *__data = new double[m.size()];
+    auto *__data = new float[m.size()];
     auto *_data = m.data();
     if (m._dev == SEQ) {
         for (int i = 0; i < m.size(); i++) {

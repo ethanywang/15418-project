@@ -2,7 +2,7 @@
 // Created by yuwang4 on 2020-04-21.
 //
 
-#include <sigmoid.h>
+#include "sigmoid.h"
 
 Matrix Sigmoid::forward(Matrix m) {
     auto *__data = new float[m.size()];

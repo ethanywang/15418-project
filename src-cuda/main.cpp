@@ -1,9 +1,10 @@
-#include <gru.h>
-#include <lstm.h>
+#include "gru.h"
+#include "lstm.h"
+
 #include <iostream>
 
 int main(int argc, char **argv) {
-    std::cout<<"cuda src main()\n";
+    std::cout << "cuda src main()\n";
     GRU gru(10, 20);
     Matrix input_x(10, 1);
     Matrix h(20, 1);
