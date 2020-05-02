@@ -19,15 +19,15 @@ public:
     Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N) {
         assert(M > 0);
         assert(N > 0);
-        _data = new double[_size]();
+        _data = new float[_size]();
         if (!zero) {
             for (int i = 0; i < _size; i++) {
-                _data[i] = static_cast<double>(_rd());
+                _data[i] = static_cast<float>(_rd());
             }
         }
     }
 
-    Matrix(double *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
+    Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
         assert(data != nullptr);
         assert(M > 0);
         assert(N > 0);
@@ -37,8 +37,8 @@ public:
         _M = m._M;
         _N = m._N;
         _size = m._size;
-        _data = new double[m._size];
-        memcpy(_data, m._data, m._size * sizeof(double));
+        _data = new float[m._size];
+        memcpy(_data, m._data, m._size * sizeof(float));
     }
 
     ~Matrix() {
@@ -47,9 +47,9 @@ public:
 
     Matrix operator-() const;
 
-    Matrix operator-(const double &) const;
+    Matrix operator-(const float &) const;
 
-    Matrix operator+(const double &) const;
+    Matrix operator+(const float &) const;
 
     Matrix &operator=(const Matrix &);
 
@@ -65,10 +65,10 @@ public:
 
     Matrix dot(Matrix &);
 
-    double *data();
+    float *data();
 
 private:
-    double *_data;
+    float *_data;
     int _M;
     int _N;
     int _size;

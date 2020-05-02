@@ -5,7 +5,7 @@
 #include <sigmoid.h>
 
 Matrix Sigmoid::forward(Matrix m) {
-    auto *__data = new double[m.size()];
+    auto *__data = new float[m.size()];
     auto *_data = m.data();
     for (int i = 0; i < m.size(); i++) {
         __data[i] = 1 / (1 + exp(_data[i]));

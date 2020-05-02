@@ -5,7 +5,7 @@
 #include <tanh.h>
 
 Matrix Tanh::forward(Matrix m) {
-    auto *__data = new double[m.size()];
+    auto *__data = new float[m.size()];
     auto *_data = m.data();
     for (int i = 0; i < m.size(); i++) {
         __data[i] = tanh(_data[i]);
