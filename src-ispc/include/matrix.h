@@ -10,8 +10,6 @@
 #include <cstring>
 #include <string>
 
-using namespace std;
-
 class Matrix {
 public:
     Matrix() : _data(nullptr), _M(0), _N(0), _size(0) {};
@@ -69,11 +67,12 @@ public:
 
 private:
     float *_data;
+
     int _M;
     int _N;
     int _size;
 
-    static mt19937_64 _rd;
+    static std::mt19937 _rd;
 };
 
 
