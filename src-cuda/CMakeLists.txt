@@ -2,21 +2,17 @@
 set(CMAKE_CUDA_COMPILER /usr/local/depot/cuda/bin/nvcc)
 set(CMAKE_CUDA_FLAGS "-O3 -m64 --gpu-architecture compute_61")
 
-# set include directories
-include_directories(include)
-
+# compile CUDA library
 add_library(cu STATIC
     gru.cpp 
     sigmoid.cpp 
     tanh.cpp 
     matrix.cpp 
     lstm.cpp 
-    cudaOperator.cu
+    cuda_operator.cu
 )
 target_compile_features(cu PUBLIC cxx_std_11)
-set_target_properties(cu
-                       PROPERTIES CUDA_SEPARABLE_COMPILATION ON
-                      )
+set_target_properties(cu PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 # add the executable
 add_executable(rnn-cuda main.cpp)

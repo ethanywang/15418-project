@@ -1,11 +1,11 @@
 #include "matrix.h"
-#include "cudaOperator.h"
-
-#include <iostream>
+#include "cuda_operator.h"
 
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
+
+#include <iostream>
 
 #define INDEX(r, c, width) ((r) * (width) + (c))
 #define MBLK 16
@@ -66,12 +66,6 @@ __global__ void cudaTanhKernel(float *src, float *dst, int length) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i > length) return;
     dst[i] = devTanh(src[i]);
-}
-
-// host functions
-void setup(int size, float *data) {
-    // std::cout << "cuda setup...\n";
-    cudaMemcpy(cuData, data, sizeof(float) * size, cudaMemcpyHostToDevice);
 }
 
 void cuAdd(float *src1, float *src2, float *dst, int M, int N) {

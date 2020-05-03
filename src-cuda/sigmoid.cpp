@@ -3,7 +3,7 @@
 //
 
 #include "sigmoid.h"
-#include "cudaOperator.h"
+#include "cuda_operator.h"
 
 Matrix Sigmoid::forward(Matrix m) {
     auto *__data = new float[m.size()];

@@ -3,7 +3,7 @@
 //
 
 #include "matrix.h"
-#include "cudaOperator.h"
+#include "cuda_operator.h"
 
 #include <cstring>
 

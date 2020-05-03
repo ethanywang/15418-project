@@ -3,7 +3,7 @@
 //
 
 #include "tanh.h"
-#include "cudaOperator.h"
+#include "cuda_operator.h"
 
 Matrix Tanh::forward(Matrix m) {
     auto *__data = new float[m.size()];
