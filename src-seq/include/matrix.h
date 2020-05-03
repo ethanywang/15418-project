@@ -73,7 +73,7 @@ private:
     int _N;
     int _size;
 
-    static mt19937_64 _rd;
+    static mt19937 _rd;
 };
 
 

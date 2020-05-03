@@ -24,10 +24,10 @@ else ()
 endif ()
 
 # set common flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -m64 -Wall -mavx2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -m64 -Wall")
 
 # set debug mode
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
 # add include directory
@@ -37,7 +37,7 @@ include_directories(src-ispc/include)
 
 # add subdirectories
 add_subdirectory(src-seq)
-#add_subdirectory(src-cuda)
+add_subdirectory(src-cuda)
 add_subdirectory(src-ispc)
 add_subdirectory(lib/benchmark)
 add_subdirectory(test)
