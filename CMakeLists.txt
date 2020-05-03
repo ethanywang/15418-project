@@ -9,7 +9,7 @@ endif()
 #set(CMAKE_CXX_COMPILER "g++")
 
 # set the project name
-project(RNN LANGUAGES CXX C VERSION 1.0)
+project(RNN)
 
 # CTest
 include(CTest)
@@ -38,5 +38,5 @@ include_directories(src-cuda/include)
 add_subdirectory(src-seq)
 add_subdirectory(src-cuda)
 add_subdirectory(src-ispc)
-add_subdirectory(lib/benchmark)
+#add_subdirectory(lib/benchmark)
 add_subdirectory(test)
