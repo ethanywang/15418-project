@@ -98,7 +98,7 @@ Matrix Matrix::mul(Matrix &d) {
     assert(_N == d._M);
 
     /* do calculation */
-    auto *data = new float[_M * d._N]();
+    auto *data = new float[_M * d._N];
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < d._N; j++) {
@@ -109,7 +109,7 @@ Matrix Matrix::mul(Matrix &d) {
     //         }
     //     }
     // }
-    this->_cu->cuMul(_data, d._data, data, _M, _N);
+    this->_cu->cuMul(_data, d._data, data, _M, d._N);
     /* allocate new data */
     return Matrix(data, _M, d._N);
 }

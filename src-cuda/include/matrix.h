@@ -45,7 +45,6 @@ public:
 
     ~Matrix() {
         delete[] _data;
-        delete _cu;
     };
 
     Matrix operator-() const;

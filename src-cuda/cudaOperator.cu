@@ -64,12 +64,12 @@ __global__ void cudaTanhKernel(float *src, float *dst, int length) {
 
 // host functions
 void CudaOperator::setup(int size, float *data) {
-    std::cout << "cuda setup...\n";
+    // std::cout << "cuda setup...\n";
     cudaMemcpy(cuData, data, sizeof(float) * size, cudaMemcpyHostToDevice);
 }
 
 void CudaOperator::cuAdd(float *src1, float *src2, float *dst, int M, int N) {
-    std::cout << "cuAdd()\n";
+    // std::cout << "cuAdd()\n";
     int elements = M * N;
     int size = elements * sizeof(float);
     // Allocate vectors in device memory
@@ -88,7 +88,7 @@ void CudaOperator::cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     int threadsPerBlock = MBLK * MBLK;
     int blocksPerGrid = (elements + threadsPerBlock - 1) / threadsPerBlock;
     cudaMatAddKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, elements);
-
+    cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(dst, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -99,6 +99,7 @@ void CudaOperator::cuAdd(float *src1, float *src2, float *dst, int M, int N) {
 }
 
 void CudaOperator::cuMul(float *A, float *B, float *C, int M, int N) {
+    // std::cout << "cuMul()\n";
     int elements = M * N;
     int size = elements * sizeof(float);
     // Allocate vectors in device memory
@@ -117,7 +118,7 @@ void CudaOperator::cuMul(float *A, float *B, float *C, int M, int N) {
     dim3 threadsPerBlock(LBLK, LBLK);
     dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
     cudaMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, d_A, d_B, d_C);
-
+    cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -125,9 +126,14 @@ void CudaOperator::cuMul(float *A, float *B, float *C, int M, int N) {
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
+    cudaError_t errCode = cudaPeekAtLastError();
+    if (errCode != cudaSuccess) {
+        fprintf(stderr, "WARNING: A CUDA error occured: code=%d, %s\n", errCode, cudaGetErrorString(errCode));
+    }
 }
 
 void CudaOperator::cuDot(float *A, float *B, float *C, int M, int N) {
+    // std::cout << "cuDot()\n";
     int elements = M * N;
     int threadsPerBlock = MBLK * MBLK;
     int blocksPerGrid = updiv(elements, threadsPerBlock);
@@ -146,7 +152,7 @@ void CudaOperator::cuDot(float *A, float *B, float *C, int M, int N) {
 
     // Invoke
     cudaMatDotKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, elements);
-
+    cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -157,6 +163,7 @@ void CudaOperator::cuDot(float *A, float *B, float *C, int M, int N) {
 }
 
 void CudaOperator::cuSigmoid(float *src, float *dst, int length) {
+    // std::cout << "cuSig()\n";
     int size = length * sizeof(float);
     // Allocate vectors in device memory
     float *d_src;
@@ -171,7 +178,7 @@ void CudaOperator::cuSigmoid(float *src, float *dst, int length) {
     int threadsPerBlock = MBLK * MBLK;
     int blocksPerGrid = updiv(length, threadsPerBlock);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
-
+    cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(dst, d_dst, size, cudaMemcpyDeviceToHost);
 
@@ -181,6 +188,7 @@ void CudaOperator::cuSigmoid(float *src, float *dst, int length) {
 }
 
 void CudaOperator::cuTanh(float *src, float *dst, int length) {
+    // std::cout << "cuTanh()\n";
     int size = length * sizeof(float);
     // Allocate vectors in device memory
     float *d_src;
@@ -194,7 +202,8 @@ void CudaOperator::cuTanh(float *src, float *dst, int length) {
     int threadsPerBlock = MBLK * MBLK;
     int blocksPerGrid = updiv(length, threadsPerBlock);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
-
+    cudaDeviceSynchronize();
+    
     // copy result
     cudaMemcpy(dst, d_dst, size, cudaMemcpyDeviceToHost);
 
