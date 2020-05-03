@@ -31,9 +31,8 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
 # add include directory
-include_directories(src-seq/include)
+include_directories(include)
 include_directories(src-cuda/include)
-include_directories(src-ispc/include)
 
 # add subdirectories
 add_subdirectory(src-seq)
