@@ -1,3 +1,5 @@
+# set source files
+file(GLOB TARGET_SOURCES "src-seq/" *.cpp)
 
 # add the executable
-add_executable(rnn-seq main.cpp gru.cpp sigmoid.cpp tanh.cpp matrix.cpp lstm.cpp)
+add_executable(rnn-seq ${TARGET_SOURCES})

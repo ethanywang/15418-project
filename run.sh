@@ -1,6 +1,4 @@
 #!/bin/bash
-rm -r build
-mkdir build
+rm -r build && mkdir build
 cd build
-cmake ..
-make
+cmake3 .. && make -j

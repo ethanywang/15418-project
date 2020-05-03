@@ -4,10 +4,6 @@ if (POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif()
 
-# Alternatively, set gcc/g++
-#set(CMAKE_C_COMPILER "gcc")
-#set(CMAKE_CXX_COMPILER "g++")
-
 # set the project name
 project(RNN)
 
