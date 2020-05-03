@@ -89,11 +89,12 @@ public:
     Device _dev;
 
 private:
+    float *_data;
     int _M;
     int _N;
     int _size;
-    float *_data;
-    static mt19937_64 _rd;
+
+    static mt19937 _rd;
 };
 
 

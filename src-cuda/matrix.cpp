@@ -147,4 +147,4 @@ Matrix Matrix::operator+(const float &num) const {
     return Matrix(data, _M, _N);
 }
 
-mt19937_64 Matrix::_rd = mt19937_64(0);
+mt19937 Matrix::_rd = mt19937(0);
