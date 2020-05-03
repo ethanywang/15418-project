@@ -6,8 +6,6 @@
 #define RNN_DATA_H
 
 #include "cudaOperator.h"
-#include "device.h"
-
 #include <random>
 #include <cassert>
 #include <cstring>
@@ -18,9 +16,7 @@ using namespace std;
 
 class Matrix {
 public:
-    Matrix() : _data(nullptr), _M(0), _N(0), _size(0), _dev(SEQ), _cu() {
-        _dev = SEQ;
-    };
+    Matrix() : _data(nullptr), _M(0), _N(0), _size(0), _cu() {};
 
     Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N), _cu() {
         assert(M > 0);
@@ -33,17 +29,7 @@ public:
         }
     }
 
-    Matrix(int M, int N, Device device) : _M(M), _N(N), _size(M * N), _dev(device), _cu() {
-        assert(M > 0);
-        assert(N > 0);
-        _data = new float[_size]();
-        std::cout << "constructor cuda\n";
-        if (device == GPU) {
-            _cu = new CudaOperator();
-        }
-    }
-
-    Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N), _dev(SEQ), _cu() {
+    Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N), _cu() {
         assert(data != nullptr);
         assert(M > 0);
         assert(N > 0);
@@ -84,15 +70,14 @@ public:
 
     float *data();
 
-    // CUDA
-    CudaOperator *_cu;
-    Device _dev;
-
+    CudaOperator *_cuHandler();
 private:
     float *_data;
     int _M;
     int _N;
     int _size;
+    // CUDA
+    CudaOperator *_cu;
 
     static mt19937 _rd;
 };
