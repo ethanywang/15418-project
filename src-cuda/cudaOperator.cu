@@ -1,6 +1,11 @@
 #include "matrix.h"
+#include "cudaOperator.h"
 
 #include <iostream>
+
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <driver_functions.h>
 
 #define INDEX(r, c, width) ((r) * (width) + (c))
 #define MBLK 16
@@ -8,6 +13,7 @@
 #define MAXSIZE 1024
 // cuda kernel variables
 // store in fast memory
+
 __constant__ float cuData[MAXSIZE];
 
 static inline int updiv(int n, int d) {
@@ -63,12 +69,12 @@ __global__ void cudaTanhKernel(float *src, float *dst, int length) {
 }
 
 // host functions
-void CudaOperator::setup(int size, float *data) {
+void setup(int size, float *data) {
     // std::cout << "cuda setup...\n";
     cudaMemcpy(cuData, data, sizeof(float) * size, cudaMemcpyHostToDevice);
 }
 
-void CudaOperator::cuAdd(float *src1, float *src2, float *dst, int M, int N) {
+void cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     // std::cout << "cuAdd()\n";
     int elements = M * N;
     int size = elements * sizeof(float);
@@ -98,7 +104,7 @@ void CudaOperator::cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     cudaFree(d_C);
 }
 
-void CudaOperator::cuMul(float *A, float *B, float *C, int M, int N) {
+void cuMul(float *A, float *B, float *C, int M, int N) {
     // std::cout << "cuMul()\n";
     int elements = M * N;
     int size = elements * sizeof(float);
@@ -132,7 +138,7 @@ void CudaOperator::cuMul(float *A, float *B, float *C, int M, int N) {
     }
 }
 
-void CudaOperator::cuDot(float *A, float *B, float *C, int M, int N) {
+void cuDot(float *A, float *B, float *C, int M, int N) {
     // std::cout << "cuDot()\n";
     int elements = M * N;
     int threadsPerBlock = MBLK * MBLK;
@@ -162,7 +168,7 @@ void CudaOperator::cuDot(float *A, float *B, float *C, int M, int N) {
     cudaFree(d_C);
 }
 
-void CudaOperator::cuSigmoid(float *src, float *dst, int length) {
+void cuSigmoid(float *src, float *dst, int length) {
     // std::cout << "cuSig()\n";
     int size = length * sizeof(float);
     // Allocate vectors in device memory
@@ -187,7 +193,7 @@ void CudaOperator::cuSigmoid(float *src, float *dst, int length) {
     cudaFree(d_dst);
 }
 
-void CudaOperator::cuTanh(float *src, float *dst, int length) {
+void cuTanh(float *src, float *dst, int length) {
     // std::cout << "cuTanh()\n";
     int size = length * sizeof(float);
     // Allocate vectors in device memory

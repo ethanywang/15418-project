@@ -3,6 +3,7 @@
 //
 
 #include "matrix.h"
+#include "cudaOperator.h"
 
 #include <cstring>
 
@@ -23,10 +24,6 @@ Matrix &Matrix::operator=(const Matrix &m) {
 
 int Matrix::size() {
     return _size;
-}
-
-CudaOperator* Matrix::_cuHandler() {
-    return _cu;
 }
 
 int Matrix::size(int dim) {
@@ -72,7 +69,7 @@ Matrix Matrix::add(Matrix &d) {
     // }
 
     // cuda-parallel
-    this->_cu->cuAdd(_data, d._data, data, _M, _N);
+    cuAdd(_data, d._data, data, _M, _N);
 
     return Matrix(data, _M, _N);
 }
@@ -89,7 +86,7 @@ Matrix Matrix::dot(Matrix &d) {
     //         }
     //     }
     // }
-    this->_cu->cuDot(_data, d._data, data, _M, _N);
+    cuDot(_data, d._data, data, _M, _N);
     return Matrix(data, _M, _N);
 }
 
@@ -109,7 +106,7 @@ Matrix Matrix::mul(Matrix &d) {
     //         }
     //     }
     // }
-    this->_cu->cuMul(_data, d._data, data, _M, d._N);
+    cuMul(_data, d._data, data, _M, d._N);
     /* allocate new data */
     return Matrix(data, _M, d._N);
 }
