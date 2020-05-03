@@ -5,7 +5,7 @@ if (POLICY CMP0048)
 endif()
 
 # set the project name
-project(RNN LANGUAGES CXX C CUDA)
+project(RNN LANGUAGES CXX C CUDA VERSION 1.0.0)
 
 # CTest
 include(CTest)
@@ -25,8 +25,15 @@ include_directories(include)
 include_directories(src-cuda/include)
 
 # add subdirectories
+# do not build tests of benchmarking lib
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Suppressing benchmark's tests" FORCE)
+add_subdirectory(lib/benchmark)
+# build google test
+add_subdirectory(lib/googletest)
+# source
 add_subdirectory(src-seq)
 add_subdirectory(src-cuda)
 add_subdirectory(src-ispc)
-add_subdirectory(lib/benchmark)
+# QA
 add_subdirectory(test)
+add_subdirectory(bench)
