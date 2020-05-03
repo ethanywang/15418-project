@@ -39,5 +39,4 @@ set(TARGET_SOURCES main.cpp gru.cpp sigmoid.cpp tanh.cpp matrix.cpp lstm.cpp)
 # add the executable
 add_executable(rnn-ispc ${ALL_ISPC_BUILD_OUTPUTS} ${ALL_ISPC_SRC_NAMES})
 target_sources(rnn-ispc PRIVATE ${TARGET_SOURCES})
-target_include_directories(rnn-ispc PRIVATE include)
-target_include_directories(rnn-ispc PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(rnn-ispc PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
