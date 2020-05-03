@@ -79,3 +79,4 @@ build/*
 cmake-build-*/*
 .vscode/*
 
+.DS_Store
