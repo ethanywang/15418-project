@@ -1,6 +1,3 @@
-#ifndef uint
-#define uint unsigned int
-#endif
 
 class CudaOperator {
 public:
