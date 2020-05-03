@@ -1,3 +1,5 @@
+#ifndef RNN_CUDA_OPERATOR_H
+#define RNN_CUDA_OPERATOR_H
 
 class CudaOperator {
 public:
@@ -15,3 +17,5 @@ public:
 
     void setup(int size, float *data);
 };
+
+#endif // RNN_CUDA_OPERATOR_H
