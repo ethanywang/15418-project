@@ -5,46 +5,31 @@
 #ifndef RNN_DATA_H
 #define RNN_DATA_H
 
+#include "cudaOperator.h"
 #include <random>
 #include <cassert>
 #include <cstring>
 #include <string>
 #include <iostream>
-#include "cudaOperator.h"
-#include "device.h"
 
 using namespace std;
 
 class Matrix {
 public:
-    Matrix() : _data(nullptr), _M(0), _N(0), _size(0), _dev(SEQ), _cu() { 
-        _dev = SEQ; 
-    };
+    Matrix() : _data(nullptr), _M(0), _N(0), _size(0), _cu() {};
 
-    Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N) {
+    Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N), _cu() {
         assert(M > 0);
         assert(N > 0);
-        _data = new double[_size]();
+        _data = new float[_size]();
         if (!zero) {
             for (int i = 0; i < _size; i++) {
-                _data[i] = static_cast<double>(_rd());
+                _data[i] = static_cast<float>(_rd());
             }
         }
     }
 
-    Matrix(int M, int N, Device device) : _M(M), _N(N), _size(M * N), _dev(device) {
-        assert(M > 0);
-        assert(N > 0);
-        _data = new double[_size]();
-        std::cout<<"constructor cuda\n";
-        if (device == GPU) {
-            std::cout<<"cuda setup\n";
-            _cu = new CudaOperator();
-            _cu->setup(_size, _data);
-        }
-    }
-
-    Matrix(double *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N), _dev(SEQ), _cu() {
+    Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N), _cu() {
         assert(data != nullptr);
         assert(M > 0);
         assert(N > 0);
@@ -54,18 +39,20 @@ public:
         _M = m._M;
         _N = m._N;
         _size = m._size;
-        _data = new double[m._size];
-        memcpy(_data, m._data, m._size * sizeof(double));
+        _data = new float[m._size];
+        memcpy(_data, m._data, m._size * sizeof(float));
     }
 
     ~Matrix() {
         delete[] _data;
-        delete _cu;
     };
 
     Matrix operator-() const;
-    Matrix operator-(const double &) const;
-    Matrix operator+(const double &) const;
+
+    Matrix operator-(const float &) const;
+
+    Matrix operator+(const float &) const;
+
     Matrix &operator=(const Matrix &);
 
     int size();
@@ -80,18 +67,18 @@ public:
 
     Matrix dot(Matrix &);
 
-    double *data();
+    float *data();
 
+    CudaOperator *_cuHandler();
 private:
+    float *_data;
     int _M;
     int _N;
     int _size;
-    double *_data;
-
     // CUDA
-    CudaOperator *_cu; 
-    Device _dev;
-    static mt19937_64 _rd;
+    CudaOperator *_cu;
+
+    static mt19937 _rd;
 };
 
 

@@ -1,8 +1,8 @@
 //
 // Created by yuwang4 on 2020-04-20.
 //
-#include <gru.h>
-#include <lstm.h>
+#include "gru.h"
+#include "lstm.h"
 
 int main(int argc, char **argv) {
     GRU gru(10, 20);

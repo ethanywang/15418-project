@@ -2,7 +2,7 @@
 // Created by yuwang4 on 2020-04-21.
 //
 
-#include <gru.h>
+#include "gru.h"
 
 Matrix GRU::forward(Matrix &x, Matrix &h) {
     this->h_t_1 = h;

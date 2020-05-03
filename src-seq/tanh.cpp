@@ -2,7 +2,7 @@
 // Created by yuwang on 2020-04-21.
 //
 
-#include <tanh.h>
+#include "tanh.h"
 
 Matrix Tanh::forward(Matrix m) {
     auto *__data = new float[m.size()];
