@@ -6,16 +6,19 @@
 #include <driver_functions.h>
 
 #include <iostream>
-
-#define INDEX(r, c, width) ((r) * (width) + (c))
+#define RINDEX(r, c, width) (r * width + c)
 #define MBLK 16
 #define LBLK 32
 #define MAXSIZE 1024
-// cuda kernel variables
-// store in fast memory
+// 0, simple mat mul -> 1 read, 1 write per thread
+// 1, modified simple mat mul -> 1 read, 1 write per warp
+// 2, blocked mat mul
+#define KERNELFUNC 0
 
+// read-only variables should be stored in fast memory
 __constant__ float cuData[MAXSIZE];
 
+// cuda kernel functions
 static inline int updiv(int n, int d) {
     return (n + d - 1) / d;
 }
@@ -28,7 +31,7 @@ __device__ static inline float devTanh(float x) {
     return tanh(x);
 }
 
-// kernel functions
+// basic matrix operation
 __global__ void cudaMatAddKernel(float *src1, float *src2, float *dst, int bound) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < bound) {
@@ -43,7 +46,8 @@ __global__ void cudaMatDotKernel(float *src1, float *src2, float *dst, int bound
     }
 }
 
-__global__ void cudaMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
+// matrix multiplication
+__global__ void cudaSimpleMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
     if (i >= M || j >= N) {
@@ -51,11 +55,95 @@ __global__ void cudaMatMulKernel(int M, int N, float *dmatA, float *dmatB, float
     }
     float sum = 0.0;
     for (int k = 0; k < N; k++) {
-        sum += dmatA[INDEX(i, k, N)] * dmatB[INDEX(k, j, N)];
+        sum += dmatA[RINDEX(i, k, N)] * dmatB[RINDEX(k, j, N)];
     }
-    dmatC[INDEX(i, j, N)] = sum;
+    dmatC[RINDEX(i, j, N)] = sum;
 }
 
+__global__ void cudaOptMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= M || j >= N) {
+        return;
+    }
+    float sum = 0.0;
+    for (int k = 0; k < N; k++) {
+        sum += dmatA[RINDEX(i, k, N)] * dmatB[RINDEX(k, j, N)];
+    }
+    dmatC[RINDEX(i, j, N)] = sum;
+}
+
+__global__ void cudaSimpleBlockedMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
+    // convert (i,j) to the top left of the block
+    int i = blockIdx.y * blockDim.y + threadIdx.y; 
+    int j = blockIdx.x * blockDim.x + threadIdx.x; 
+    i *= LBLK; 
+    j *= LBLK;
+  
+    // keep local copy
+    float subA[LBLK * LBLK];
+    float subB[LBLK * LBLK];
+    float subC[LBLK * LBLK];
+  
+    for (int bi = 0; bi < LBLK; bi++){
+        for (int bj = 0; bj < LBLK; bj++){
+            subC[RINDEX(bi,bj,LBLK)] = 0;
+        }
+    }
+
+    for (int k = 0; k <= N-LBLK; k+=LBLK) { /* Compute product for each submatrix */
+        for (int bi = 0; bi < LBLK; bi++) {
+            for (int bj = 0; bj < LBLK; bj++) {
+                subA[RINDEX(bi,bj,LBLK)] = dmatA[RINDEX(i+bi,k+bj,N)];
+                subB[RINDEX(bi,bj,LBLK)] = dmatB[RINDEX(k+bi,j+bj,N)];
+            }
+        }
+  
+        for (int bi = 0; bi < LBLK; bi++) {
+            for (int bj = 0; bj < LBLK; bj++) {
+                float sum = 0.0;
+                for (int bk = 0; bk < LBLK; bk++) {
+                    sum += subA[RINDEX(bi,bk,LBLK)] * subB[RINDEX(bk,bj,LBLK)];
+                }
+                subC[RINDEX(bi,bj,LBLK)] += sum;
+        }
+      }
+    }
+  
+    for (int bi = 0; bi < LBLK; bi++){
+        for (int bj = 0; bj < LBLK; bj++){
+            dmatC[RINDEX(i+bi,j+bj,N)] = subC[RINDEX(bi,bj,LBLK)];
+        }
+    }           
+}
+
+__global__ void cudaOptBlockedMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
+    int i = blockIdx.y * blockDim.y + threadIdx.y;
+    int j = blockIdx.x * blockDim.x + threadIdx.x;
+  
+    int bi = threadIdx.y;
+    int bj = threadIdx.x;
+  
+    __shared__ float subA[LBLK * LBLK];
+    __shared__ float subB[LBLK * LBLK];
+    float sum = 0;
+  
+    for (int k = 0; k < N; k += LBLK) {
+      subA[RINDEX(bi,bj,LBLK)] = dmatA[RINDEX(i,k+bj,N)];
+      subB[RINDEX(bi,bj,LBLK)] = dmatB[RINDEX(k+bi,j,N)];
+  
+      __syncthreads();
+  
+      for (int bk = 0; bk < LBLK; bk++) {
+        sum += subA[RINDEX(bi,bk,LBLK)] * subB[RINDEX(bk,bj,LBLK)];
+      }
+  
+      __syncthreads();
+    }
+    dmatC[RINDEX(i,j,N)] = sum;
+}
+
+// vecotr sigmoid
 __global__ void cudaSigmoidKernel(float *src, float *dst, int length) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i > length) return;
@@ -117,7 +205,7 @@ void cuMul(float *A, float *B, float *C, int M, int N) {
     // Invoke Kernel
     dim3 threadsPerBlock(LBLK, LBLK);
     dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
-    cudaMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, d_A, d_B, d_C);
+    cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, d_A, d_B, d_C);
     cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);

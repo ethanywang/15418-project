@@ -12,8 +12,8 @@
 #include <chrono>
 
 static void BM_CUDA_MatDot_100(benchmark::State& state) {
-    Matrix m1(10, 10);
-    Matrix m2(10, 10);
+    Matrix m1(1000000000, 10);
+    Matrix m2(1000000000, 10);
     for (auto _ : state) {
         auto start = std::chrono::high_resolution_clock::now();
         m1.dot(m2);

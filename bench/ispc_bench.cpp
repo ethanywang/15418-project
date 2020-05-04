@@ -8,13 +8,13 @@
 #include "tanh.h"
 #include "gru.h"
 #include "lstm.h"
-
 #include <chrono>
 
 /* dot */
 static void BM_ISPC_MatDot_10x10(benchmark::State& state) {
     Matrix m1(10, 10);
     Matrix m2(10, 10);
+
     for (auto _ : state) {
         m1.dot(m2);
     }
