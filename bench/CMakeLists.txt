@@ -9,7 +9,7 @@ target_link_libraries(rnn-seq-bench
 )
 
 # cuda bench
-add_executable(rnn-cuda-bench cuda_bench.cpp)
+add_executable(rnn-cuda-bench cuda_bench.cpp warmup.cu)
 target_link_libraries(rnn-cuda-bench
         benchmark::benchmark
         libcuda
