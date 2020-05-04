@@ -134,7 +134,7 @@ Matrix Matrix::operator-(const float &num) const {
 Matrix Matrix::operator+(const float &num) const {
     auto *data = new float[_size];
     for (int i = 0; i < _size; i++) {
-        data[i] = data[i] + num;
+        data[i] = _data[i] + num;
     }
     return Matrix(data, _M, _N);
 }

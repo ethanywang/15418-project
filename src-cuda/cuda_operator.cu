@@ -223,8 +223,6 @@ void cuMul(float *A, float *B, float *C, int M, int N) {
 void cuDot(float *A, float *B, float *C, int M, int N) {
     // std::cout << "cuDot()\n";
     int elements = M * N;
-    int threadsPerBlock = MBLK * MBLK;
-    int blocksPerGrid = updiv(elements, threadsPerBlock);
     int size = elements * sizeof(float);
     // Allocate vectors in device memory
     float *d_A;
@@ -239,6 +237,8 @@ void cuDot(float *A, float *B, float *C, int M, int N) {
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
 
     // Invoke
+    int threadsPerBlock = MBLK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock);
     cudaMatDotKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, elements);
     cudaDeviceSynchronize();
     // copy result
@@ -263,7 +263,7 @@ void cuSigmoid(float *src, float *dst, int length) {
     cudaMemcpy(d_src, src, size, cudaMemcpyHostToDevice);
 
     // Invoke
-    int threadsPerBlock = MBLK * MBLK;
+    int threadsPerBlock = MBLK;
     int blocksPerGrid = updiv(length, threadsPerBlock);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
     cudaDeviceSynchronize();
@@ -287,7 +287,7 @@ void cuTanh(float *src, float *dst, int length) {
     // Copy matrix from host memory to device memory
     cudaMemcpy(d_src, src, size, cudaMemcpyHostToDevice);
 
-    int threadsPerBlock = MBLK * MBLK;
+    int threadsPerBlock = MBLK;
     int blocksPerGrid = updiv(length, threadsPerBlock);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
     cudaDeviceSynchronize();
