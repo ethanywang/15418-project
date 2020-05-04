@@ -115,7 +115,7 @@ float *Matrix::data() {
     return _data;
 }
 
-Matrix Matrix::operator-() const {
+Matrix Matrix::operator-() {
     auto *data = new float[_size];
 //    for (int i = 0; i < _size; i++) {
 //        data[i] = -_data[i];
@@ -126,7 +126,7 @@ Matrix Matrix::operator-() const {
     return Matrix(data, _M, _N);
 }
 
-Matrix Matrix::operator-(const float &num) const {
+Matrix Matrix::operator-(const float &num) {
     auto *data = new float[_size];
 //    for (int i = 0; i < _size; i++) {
 //        data[i] = _data[i] - num;
@@ -137,10 +137,10 @@ Matrix Matrix::operator-(const float &num) const {
     return Matrix(data, _M, _N);
 }
 
-Matrix Matrix::operator+(const float &num) const {
+Matrix Matrix::operator+(const float &num) {
     auto *data = new float[_size];
 //    for (int i = 0; i < _size; i++) {
-//        data[i] = data[i] + num;
+//        data[i] = _data[i] + num;
 //    }
 
     veclinear_ispc(_data, 1.0, num, _size, data);
