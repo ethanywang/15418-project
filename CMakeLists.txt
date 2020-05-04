@@ -23,6 +23,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 # add include directory
 include_directories(include)
 include_directories(src-cuda/include)
+include_directories(lib/benchmark/include)
 
 # add subdirectories
 # do not build tests of benchmarking lib

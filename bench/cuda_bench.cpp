@@ -3,20 +3,21 @@
 //
 
 #include "benchmark/benchmark.h"
+#include "matrix.h"
+#include "sigmoid.h"
+#include "tanh.h"
+#include "gru.h"
+#include "lstm.h"
 
-#include <string>
-
-static void BM_StringCreation(benchmark::State& state) {
-    for (auto _ : state)
-        std::string empty_string;
+static void BM_CUDA_MatDot_100(benchmark::State& state) {
+    Matrix m1(10, 10);
+    Matrix m2(10, 10);
+    for (auto _ : state) {
+        m1.dot(m2);
+    }
 }
+
 // Register the function as a benchmark
-BENCHMARK(BM_StringCreation);
+BENCHMARK(BM_CUDA_MatDot_100);
 
-// Define another benchmark
-static void BM_StringCopy(benchmark::State& state) {
-    std::string x = "hello";
-    for (auto _ : state)
-        std::string copy(x);
-}
-BENCHMARK(BM_StringCopy);
+BENCHMARK_MAIN();

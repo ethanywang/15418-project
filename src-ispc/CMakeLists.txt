@@ -37,9 +37,22 @@ endforeach ()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
 
 # set common target source
-file(GLOB TARGET_SOURCES "src-ispc/" *.cpp)
+set(CXX_SOURCES
+    gru.cpp
+    lstm.cpp
+    matrix.cpp
+    sigmoid.cpp
+    tanh.cpp
+)
 
 # add the executable
-add_executable(rnn-ispc ${ALL_ISPC_BUILD_OUTPUTS} ${ALL_ISPC_SRC_NAMES})
-target_sources(rnn-ispc PRIVATE ${TARGET_SOURCES})
+add_executable(rnn-ispc main.cpp ${ALL_ISPC_BUILD_OUTPUTS} ${ALL_ISPC_SRC_NAMES})
+target_sources(rnn-ispc PRIVATE ${CXX_SOURCES})
 target_include_directories(rnn-ispc PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+
+# export to library
+add_library(libispc STATIC
+    ${ALL_ISPC_BUILD_OUTPUTS}
+    ${CXX_SOURCES}
+)
+target_include_directories(libispc PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
