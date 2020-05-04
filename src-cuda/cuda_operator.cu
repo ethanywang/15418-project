@@ -7,8 +7,8 @@
 
 #include <iostream>
 #define RINDEX(r, c, width) (r * width + c)
-#define MBLK 16
-#define LBLK 32
+#define MBLK 4
+#define LBLK 8
 #define MAXSIZE 1024
 // 0, simple mat mul -> 1 read, 1 write per thread
 // 1, modified simple mat mul -> 1 read, 1 write per warp
