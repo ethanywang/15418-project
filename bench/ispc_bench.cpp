@@ -9,7 +9,7 @@
 #include "gru.h"
 #include "lstm.h"
 
-static void BM_SEQ_MatDot_100(benchmark::State& state) {
+static void BM_ISPC_MatDot_100(benchmark::State& state) {
     Matrix m1(10, 10);
     Matrix m2(10, 10);
     for (auto _ : state) {
@@ -18,6 +18,6 @@ static void BM_SEQ_MatDot_100(benchmark::State& state) {
 }
 
 // Register the function as a benchmark
-BENCHMARK(BM_SEQ_MatDot_100);
+BENCHMARK(BM_ISPC_MatDot_100);
 
 BENCHMARK_MAIN();
