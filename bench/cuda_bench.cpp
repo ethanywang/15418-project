@@ -195,7 +195,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_1000x1000)(benchmark::State& state)
 }
 
 /* GRU - 10x10 */
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b1)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b1)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 1);
     Matrix h(10, 1);
@@ -211,7 +211,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b1)(benchmark::State& state) 
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b8)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b8)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 8);
     Matrix h(10, 8);
@@ -227,7 +227,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b8)(benchmark::State& state) 
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b16)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b16)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 16);
     Matrix h(10, 16);
@@ -243,7 +243,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b16)(benchmark::State& state)
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b32)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b32)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 32);
     Matrix h(10, 32);
@@ -259,7 +259,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b32)(benchmark::State& state)
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b64)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b64)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 64);
     Matrix h(10, 64);
@@ -275,7 +275,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b64)(benchmark::State& state)
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b128)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b128)(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 128);
     Matrix h(10, 128);
@@ -292,7 +292,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_10x10_b128)(benchmark::State& state
 }
 
 /* GRU - 100x100 */
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b1)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b1)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 1);
     Matrix h(100, 1);
@@ -308,7 +308,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b1)(benchmark::State& state
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b8)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b8)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 8);
     Matrix h(100, 8);
@@ -324,7 +324,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b8)(benchmark::State& state
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b16)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b16)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 16);
     Matrix h(100, 16);
@@ -340,7 +340,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b16)(benchmark::State& stat
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b32)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b32)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 32);
     Matrix h(100, 32);
@@ -356,7 +356,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b32)(benchmark::State& stat
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b64)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b64)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 64);
     Matrix h(100, 64);
@@ -372,7 +372,7 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b64)(benchmark::State& stat
     }
 }
 
-BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)(benchmark::State& state) {
+BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b128)(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 128);
     Matrix h(100, 128);
@@ -389,29 +389,34 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)(benchmark::State& sta
 }
 
 // Register the function as a benchmark
+// dot
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_10x10)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_100x100)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_1000x1000)->UseManualTime();
+// add
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_10x10)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_100x100)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_1000x1000)->UseManualTime();
+// mul
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_10x10)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_100x100)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_1000x1000)->UseManualTime();
+// transpose
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100)->UseManualTime();
 BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_1000x1000)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b1)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b8)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b16)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b32)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b64)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b128)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b1)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b8)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b16)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b32)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b64)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)->UseManualTime();
+// gru forward
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b1)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b8)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b16)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b32)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b64)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_10x10_b128)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b1)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b8)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b16)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b32)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b64)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_GRU_Forward_100x100_b128)->UseManualTime();
 
 BENCHMARK_MAIN();

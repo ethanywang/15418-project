@@ -9,14 +9,14 @@
 #define RINDEX(r, c, width) (r * width + c)
 #define MBLK 4
 #define LBLK 8
-#define MAXSIZE 1024
+#define THREADWORK 8
+
 // 0, simple mat mul -> 1 read, 1 write per thread
 // 1, modified simple mat mul -> 1 read, 1 write per warp
 // 2, blocked mat mul
 #define KERNELFUNC 0
 
 // read-only variables should be stored in fast memory
-__constant__ float cuData[MAXSIZE];
 
 // cuda kernel functions
 static inline int updiv(int n, int d) {
@@ -33,16 +33,46 @@ __device__ static inline float devTanh(float x) {
 
 // basic matrix operation
 __global__ void cudaMatAddKernel(float *src1, float *src2, float *dst, int bound) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < bound) {
-        dst[i] = src1[i] + src2[i];
+    int offset = blockIdx.x * blockDim.x + threadIdx.x;
+    if (offset >= bound) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < bound; i ++) {
+        dst[offset + i] = src1[offset + i] * src2[offset + i];
     }
 }
 
 __global__ void cudaMatDotKernel(float *src1, float *src2, float *dst, int bound) {
+    int offset = blockIdx.x * blockDim.x + threadIdx.x;
+    if (offset >= bound) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < bound; i ++) {
+        dst[offset + i] = src1[offset + i] * src2[offset + i];
+    }
+}
+
+__global__ void cudaMatTransposeKernel(float *src, float *dst, int M, int N) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < bound) {
-        dst[i] = src1[i] * src2[i];
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+    if (i >= M || j >= N) {
+        return;
+    }
+    for (int k = 0; k < N; k++) {
+        dst[RINDEX(k, j, N)] = src[RINDEX(i, k, N)];
+    }
+}
+
+// vecotr sigmoid
+__global__ void cudaSigmoidKernel(float *src, float *dst, int length) {
+    int offset = blockIdx.x * blockDim.x + threadIdx.x;
+    if (offset >= length) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < length; i++) {
+        dst[offset + i] = sigmoid(src[offset + i]);
+    }
+}
+
+__global__ void cudaTanhKernel(float *src, float *dst, int length) {
+    int offset = blockIdx.x * blockDim.x + threadIdx.x;
+    if (offset >= length) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < length; i ++) {
+        dst[offset + i] = devTanh(src[offset + i]);
     }
 }
 
@@ -143,19 +173,6 @@ __global__ void cudaOptBlockedMatMulKernel(int M, int N, float *dmatA, float *dm
     dmatC[RINDEX(i,j,N)] = sum;
 }
 
-// vecotr sigmoid
-__global__ void cudaSigmoidKernel(float *src, float *dst, int length) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i > length) return;
-    dst[i] = sigmoid(src[i]);
-}
-
-__global__ void cudaTanhKernel(float *src, float *dst, int length) {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i > length) return;
-    dst[i] = devTanh(src[i]);
-}
-
 void cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     // std::cout << "cuAdd()\n";
     int elements = M * N;
@@ -173,10 +190,11 @@ void cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     cudaMemcpy(d_B, src2, size, cudaMemcpyHostToDevice);
 
     // Invoke kernel
-    int threadsPerBlock = MBLK * MBLK;
-    int blocksPerGrid = (elements + threadsPerBlock - 1) / threadsPerBlock;
+    int threadsPerBlock = MBLK;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock * elementsPerThread);
     cudaMatAddKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, elements);
-    cudaDeviceSynchronize();
+    // cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(dst, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -206,7 +224,7 @@ void cuMul(float *A, float *B, float *C, int M, int N) {
     dim3 threadsPerBlock(LBLK, LBLK);
     dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
     cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, d_A, d_B, d_C);
-    cudaDeviceSynchronize();
+    // cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -237,10 +255,11 @@ void cuDot(float *A, float *B, float *C, int M, int N) {
     cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
 
     // Invoke
-    int threadsPerBlock = MBLK;
-    int blocksPerGrid = updiv(elements, threadsPerBlock);
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock * elementsPerThread);
     cudaMatDotKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, elements);
-    cudaDeviceSynchronize();
+    // cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
 
@@ -248,6 +267,32 @@ void cuDot(float *A, float *B, float *C, int M, int N) {
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
+}
+
+void cuT(float *A, float *AT, int M, int N) {
+    int elements = M * N;
+    int size = elements * sizeof(float);
+    // Allocate in device memory
+    float *d_A;
+    float *d_AT;
+    cudaMalloc(&d_A, );
+    cudaMalloc(&d_AT, size);
+    
+    // Copy source
+    cudaMemcpy(d_A, A, size, cudaMemcpyHostToDevice);
+
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock * elementsPerThread);
+    cudaMatTransposeKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_AT, M, N);
+
+    // copy result back
+    cudaMemcpy(AT, d_AT, size, cudaMemcpyDeviceToHost);
+
+    // Free device memory
+    cudaFree(d_A);
+    cudaFree(d_AT);
 }
 
 void cuSigmoid(float *src, float *dst, int length) {
@@ -263,10 +308,11 @@ void cuSigmoid(float *src, float *dst, int length) {
     cudaMemcpy(d_src, src, size, cudaMemcpyHostToDevice);
 
     // Invoke
-    int threadsPerBlock = MBLK;
-    int blocksPerGrid = updiv(length, threadsPerBlock);
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(length, threadsPerBlock * elementsPerThread);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
-    cudaDeviceSynchronize();
+    // cudaDeviceSynchronize();
     // copy result
     cudaMemcpy(dst, d_dst, size, cudaMemcpyDeviceToHost);
 
@@ -287,10 +333,12 @@ void cuTanh(float *src, float *dst, int length) {
     // Copy matrix from host memory to device memory
     cudaMemcpy(d_src, src, size, cudaMemcpyHostToDevice);
 
-    int threadsPerBlock = MBLK;
-    int blocksPerGrid = updiv(length, threadsPerBlock);
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(length, threadsPerBlock * elementsPerThread);
     cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(d_src, d_dst, length);
-    cudaDeviceSynchronize();
+    // cudaDeviceSynchronize();
     
     // copy result
     cudaMemcpy(dst, d_dst, size, cudaMemcpyDeviceToHost);

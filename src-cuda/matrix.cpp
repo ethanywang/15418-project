@@ -45,12 +45,12 @@ Matrix Matrix::T() {
     auto M = _N;
     auto N = _M;
 
-    for (int i = 0; i < _M; i++) {
-        for (int j = 0; j < _N; j++) {
-            data[j * _M + i] = this->_data[i * _N + j];
-        }
-    }
-
+    // for (int i = 0; i < _M; i++) {
+    //     for (int j = 0; j < _N; j++) {
+    //         data[j * _M + i] = this->_data[i * _N + j];
+    //     }
+    // }
+    cuT(this->_data, data, M, N);
     return Matrix(data, M, N);
 }
 
@@ -120,6 +120,7 @@ Matrix Matrix::operator-() const {
     for (int i = 0; i < _size; i++) {
         data[i] = -_data[i];
     }
+    // cuUniMinus(_data, data, _M * _N);
     return Matrix(data, _M, _N);
 }
 
@@ -128,6 +129,7 @@ Matrix Matrix::operator-(const float &num) const {
     for (int i = 0; i < _size; i++) {
         data[i] = _data[i] - num;
     }
+    // cuMinus(_data, data, _M * _N, num);
     return Matrix(data, _M, _N);
 }
 
@@ -136,6 +138,7 @@ Matrix Matrix::operator+(const float &num) const {
     for (int i = 0; i < _size; i++) {
         data[i] = _data[i] + num;
     }
+    // cuAddition(_data, data, _M * _N, num);
     return Matrix(data, _M, _N);
 }
 
