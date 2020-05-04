@@ -20,6 +20,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -m64 -Wall")
 # set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -D_DEBUG")
 
+# set release mode
+set(CMAKE_BUILD_TYPE Release)
+
 # add include directory
 include_directories(include)
 include_directories(src-cuda/include)
