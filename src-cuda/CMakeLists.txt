@@ -1,6 +1,7 @@
 # set CUDA config
 set(CMAKE_CUDA_COMPILER /usr/local/depot/cuda/bin/nvcc)
-set(CMAKE_CUDA_FLAGS "-O3 -m64 --gpu-architecture compute_61")
+set(CMAKE_CUDA_FLAGS "-m64 --gpu-architecture compute_61")
+set(CMAKE_CUDA_FLAGS_DEBUG "-O3")
 
 # compile CUDA library
 add_library(libcuda STATIC
