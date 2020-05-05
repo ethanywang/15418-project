@@ -351,7 +351,7 @@ void cuTanh(float *src, float *dst, int length) {
 void cu_mat_mul(float* A, float* B, float* C, int M, int N, int R) {
     // Invoke Kernel
     dim3 threadsPerBlock(MBLK, MBLK);
-    dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
+    dim3 blocks(updiv(M, MBLK), updiv(R, MBLK));
     cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, R, A, B, C);
 }
 
@@ -429,25 +429,34 @@ void cu_gru_forward(float *input, float* hiddent, float *output, int i_m, int i_
     // allocate tmp values
     int d = i_m;
     int h = h_m;
-    __device__ float tmp1[h * i_n];
-    __device__ float tmp2[h * i_n];
-    __device__ float tmp3[h * i_n];
-    __device__ float tmp4[h * i_n];
-    __device__ float tmp5[h * i_n];
-    __device__ float mid_res1[h * i_n];
-    __device__ float mid_res2[h * i_n];
-    __device__ float mid_res3[h * i_n];
-    __device__ float mid_res4[h * i_n];
+    // __device__ float tmp1[h * i_n];
+    // __device__ float tmp2[h * i_n];
+    // __device__ float tmp3[h * i_n];
+    // __device__ float tmp4[h * i_n];
+    // __device__ float tmp5[h * i_n];
+    // __device__ float mid_res1[h * i_n];
+    // __device__ float mid_res2[h * i_n];
+    // __device__ float mid_res3[h * i_n];
+    // __device__ float mid_res4[h * i_n];
+    float* tmp1;
+    float* tmp2;
+    float* tmp3;
+    float* tmp4;
+    float* tmp5;
+    float* mid_res1;
+    float* mid_res2;
+    float* mid_res3;
+    float* mid_res4;
 
-    // gru_mat_setup(&tmp1, h, i_n, false);
-    // gru_mat_setup(&tmp2, h, i_n, false);
-    // gru_mat_setup(&tmp3, h, i_n, false);
-    // gru_mat_setup(&tmp4, h, i_n, false);
-    // gru_mat_setup(&tmp5, h, i_n, false);
-    // gru_mat_setup(&mid_res1, h, i_n, false);
-    // gru_mat_setup(&mid_res2, h, i_n, false);
-    // gru_mat_setup(&mid_res3, h, i_n, false);
-    // gru_mat_setup(&mid_res4, h, i_n, false);
+    gru_mat_setup(&tmp1, h, i_n, false);
+    gru_mat_setup(&tmp2, h, i_n, false);
+    gru_mat_setup(&tmp3, h, i_n, false);
+    gru_mat_setup(&tmp4, h, i_n, false);
+    gru_mat_setup(&tmp5, h, i_n, false);
+    gru_mat_setup(&mid_res1, h, i_n, false);
+    gru_mat_setup(&mid_res2, h, i_n, false);
+    gru_mat_setup(&mid_res3, h, i_n, false);
+    gru_mat_setup(&mid_res4, h, i_n, false);
 
     // forward process
     // auto tmp1 = this->Wzx.mul(x);
@@ -531,6 +540,8 @@ void gru_forward_setup(int i_m, int i_n, int h_m, int h_n) {
 }
 
 void gru_mat_setup(float** ptr, int m, int n, bool init) {
+    cudaMalloc(ptr, m * n * sizeof(float));
+    // cudaError_t code =  printf("%s\n",cudaGetErrorString(code));
     if (!init) return;
     /* initialize */
     cudaMemset(ptr, 0, m * n * sizeof(float));
