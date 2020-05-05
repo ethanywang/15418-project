@@ -346,3 +346,7 @@ void cuTanh(float *src, float *dst, int length) {
     cudaFree(d_src);
     cudaFree(d_dst);
 }
+
+void cuGruForward() {
+    
+}

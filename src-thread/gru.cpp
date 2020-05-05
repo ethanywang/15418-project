@@ -3,7 +3,6 @@
 //
 
 #include "gru.h"
-#include "include/cuda_operator.h"
 
 Matrix GRU::forward(Matrix &x, Matrix &h) {
     this->h_t_1 = h;
@@ -23,4 +22,5 @@ Matrix GRU::forward(Matrix &x, Matrix &h) {
     this->h_t = (-this->z_t + 1.0).dot(this->h_t_1).add(tmp5);
 
     return this->h_t;
+
 }
