@@ -7,17 +7,56 @@
 
 #include <cstring>
 
-Matrix &Matrix::operator=(const Matrix &m) {
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <driver_functions.h>
+
+Matrix::Matrix() : _data(nullptr), _M(0), _N(0), _size(0) {};
+
+Matrix::Matrix(int M, int N, bool zero) : _M(M), _N(N), _size(M * N) {
+    assert(M > 0);
+    assert(N > 0);
+
+    // _data = new float[m._size];
+    cudaMallocManaged((void**)&_data, _size * sizeof(float));
+    if (!zero) {
+        for (int i = 0; i < _size; i++) {
+            _data[i] = static_cast<float>(_rd());
+        }
+    }
+}
+
+Matrix::Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
+    assert(data != nullptr);
+    assert(M > 0);
+    assert(N > 0);
+};
+
+Matrix::Matrix(const Matrix &m) {
+    _M = m._M;
+    _N = m._N;
+    _size = m._size;
+    // _data = new float[m._size];
+    cudaMallocManaged((void**)&_data, _size * sizeof(float));
+    memcpy(_data, m._data, m._size * sizeof(float));
+}
+
+Matrix::~Matrix() {
+    if (_data != nullptr)
+        cudaFree(_data);
+};
+
+Matrix &Matrix::operator=(Matrix &&m) noexcept {
     if (&m == this) {
         return *this;
     }
-    this->_data = new float[m._size];
-    memcpy(this->_data, m._data, m._size * sizeof(float));
-
+    // this->_data = new float[m._size];
+    // memcpy(this->_data, m._data, m._size * sizeof(float));
+    this->_data = m._data;
     this->_M = m._M;
     this->_N = m._N;
     this->_size = m._size;
-
+    
     return *this;
 }
 

@@ -8,7 +8,7 @@ add_library(libcuda STATIC
     gru.cpp 
     sigmoid.cpp 
     tanh.cpp 
-    matrix.cpp 
+    matrix.cu 
     lstm.cpp 
     cuda_operator.cu
 )

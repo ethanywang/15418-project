@@ -5,28 +5,23 @@
 #include "lstm.h"
 
 Matrix LSTM::forward(Matrix &x, Matrix &h, Matrix &c_t_1, Matrix &c_t) {
-    this->h_t_1 = h;
-    this->c_t_1 = c_t_1;
-    this->x = x;
+    auto tmp1 = std::move(this->Wfx.mul(x));
+    auto tmp7 = std::move(this->f_act(this->Wfh.mul(h).add(tmp1)));
 
-    auto tmp1 = this->Wfx.mul(x);
-    this->f_t = this->f_act(this->Wfh.mul(h_t_1).add(tmp1));
+    auto tmp2 = std::move(this->Wix.mul(x));
+    auto tmp8 = std::move(this->x_act(this->Wih.mul(h).add(tmp2)));
 
-    auto tmp2 = this->Wix.mul(x);
-    this->i_t = this->x_act(this->Wih.mul(h_t_1).add(tmp2));
+    auto tmp3 = std::move(this->Wcx.mul(x));
+    auto tmp9 = std::move(this->c_bar_act(this->Wch.mul(h).add(tmp3)));
 
-    auto tmp3 = this->Wcx.mul(x);
-    this->c_bar_t = this->c_bar_act(this->Wch.mul(h_t_1).add(tmp3));
+    auto tmp4 = std::move(tmp8.dot(tmp9));
+    auto tmp10 = std::move(tmp7.dot(c_t_1).add(tmp4));
+    c_t = std::move(tmp10);
 
-    auto tmp4 = this->i_t.dot(this->c_bar_t);
-    this->c_t = this->f_t.dot(c_t_1).add(tmp4);
-    c_t = this->c_t;
+    auto tmp5 = std::move(this->Wox.mul(x));
+    auto tmp6 = std::move(this->c_act(tmp10));
+    auto tmp11 = std::move(this->o_act(this->Woh.mul(h).add(tmp5)));
 
-    auto tmp5 = this->Wox.mul(x);
-    auto tmp6 = this->c_act(this->c_t);
-    this->o_t = this->o_act(this->Woh.mul(h_t_1).add(tmp5));
-    this->h_t = this->o_t.dot(tmp6);
-
-    return this->h_t;
+    return std::move(tmp11.dot(tmp6));
 }
 

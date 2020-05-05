@@ -6,7 +6,38 @@
 
 #include <cstring>
 
-Matrix &Matrix::operator=(const Matrix &m) {
+Matrix::Matrix() : _data(nullptr), _M(0), _N(0), _size(0) {};
+
+Matrix::Matrix(int M, int N, bool zero) : _M(M), _N(N), _size(M * N) {
+    assert(M > 0);
+    assert(N > 0);
+    _data = new float[_size]();
+    if (!zero) {
+        for (int i = 0; i < _size; i++) {
+            _data[i] = static_cast<float>(_rd());
+        }
+    }
+}
+
+Matrix::Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
+    assert(data != nullptr);
+    assert(M > 0);
+    assert(N > 0);
+};
+
+Matrix::Matrix(const Matrix &m) {
+    _M = m._M;
+    _N = m._N;
+    _size = m._size;
+    _data = new float[m._size];
+    memcpy(_data, m._data, m._size * sizeof(float));
+}
+
+Matrix::~Matrix() {
+    delete[] _data;
+};
+
+Matrix &Matrix::operator=(Matrix &&m) noexcept {
     if (&m == this) {
         return *this;
     }
