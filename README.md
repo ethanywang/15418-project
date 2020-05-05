@@ -2,11 +2,11 @@
 
 ### Requirement
 
-CMake >= 3.8
-CUDA >= 6.0
-ISPC
-OpenMP
-g++/clang with CXX 11 support
+- CMake >= 3.8
+- CUDA >= 6.0
+- ISPC
+- OpenMP
+- g++/clang with CXX 11 support
 
 ### Environment
 CMU Andrew GHC machines
