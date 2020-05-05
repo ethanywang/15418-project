@@ -50,12 +50,11 @@ __global__ void cudaMatDotKernel(float *src1, float *src2, float *dst, int bound
 
 __global__ void cudaMatTransposeKernel(float *src, float *dst, int M, int N) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j = blockIdx.y * blockDim.y + threadIdx.y;
-    if (i >= M || j >= N) {
+    if (i >= M) {
         return;
     }
     for (int k = 0; k < N; k++) {
-        dst[RINDEX(k, j, N)] = src[RINDEX(i, k, N)];
+        dst[RINDEX(k, i, N)] = src[RINDEX(i, k, N)];
     }
 }
 
@@ -275,7 +274,7 @@ void cuT(float *A, float *AT, int M, int N) {
     // Allocate in device memory
     float *d_A;
     float *d_AT;
-    cudaMalloc(&d_A, );
+    cudaMalloc(&d_A, size);
     cudaMalloc(&d_AT, size);
     
     // Copy source
