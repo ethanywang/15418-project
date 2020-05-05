@@ -10,6 +10,8 @@
 #include <cstring>
 #include <string>
 
+#define THREAD_NUM 8
+
 class Matrix {
 public:
     Matrix() : _data(nullptr), _M(0), _N(0), _size(0) {};
@@ -43,11 +45,11 @@ public:
         delete[] _data;
     };
 
-    Matrix operator-() const;
+    Matrix operator-();
 
-    Matrix operator-(const float &) const;
+    Matrix operator-(const float &);
 
-    Matrix operator+(const float &) const;
+    Matrix operator+(const float &);
 
     Matrix &operator=(const Matrix &);
 
