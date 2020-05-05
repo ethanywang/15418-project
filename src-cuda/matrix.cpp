@@ -106,7 +106,7 @@ Matrix Matrix::mul(Matrix &d) {
     //         }
     //     }
     // }
-    cuMul(_data, d._data, data, _M, d._N);
+    cuMul(_data, d._data, data, _M, _N, d._N);
     /* allocate new data */
     return Matrix(data, _M, d._N);
 }

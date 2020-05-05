@@ -1,6 +1,6 @@
 #include "matrix.h"
 #include "cuda_operator.h"
-
+#include "gru_operator.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
@@ -89,17 +89,17 @@ __global__ void cudaSimpleMatMulKernel(int M, int N, float *dmatA, float *dmatB,
     dmatC[RINDEX(i, j, N)] = sum;
 }
 
-__global__ void cudaOptMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
+__global__ void cudaOptMatMulKernel(int M, int N, int R, float *dmatA, float *dmatB, float *dmatC) {
     int i = blockIdx.y * blockDim.y + threadIdx.y;
     int j = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i >= M || j >= N) {
+    if (i >= M || j >= R) {
         return;
     }
     float sum = 0.0;
     for (int k = 0; k < N; k++) {
-        sum += dmatA[RINDEX(i, k, N)] * dmatB[RINDEX(k, j, N)];
+        sum += dmatA[RINDEX(i, k, N)] * dmatB[RINDEX(k, j, R)];
     }
-    dmatC[RINDEX(i, j, N)] = sum;
+    dmatC[RINDEX(i, j, R)] = sum;
 }
 
 __global__ void cudaSimpleBlockedMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
@@ -203,29 +203,30 @@ void cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     cudaFree(d_C);
 }
 
-void cuMul(float *A, float *B, float *C, int M, int N) {
+void cuMul(float *A, float *B, float *C, int M, int N, int R) {
     // std::cout << "cuMul()\n";
-    int elements = M * N;
-    int size = elements * sizeof(float);
+    int A_elements = M * N;
+    int B_elements = N * R;
+    int C_elements = M * R;
     // Allocate vectors in device memory
     float *d_A;
-    cudaMalloc(&d_A, size);
+    cudaMalloc(&d_A, A_elements * sizeof(float));
     float *d_B;
-    cudaMalloc(&d_B, size);
+    cudaMalloc(&d_B, B_elements * sizeof(float));
     float *d_C;
-    cudaMalloc(&d_C, size);
+    cudaMalloc(&d_C, C_elements * sizeof(float));
 
     // Copy vectors from host memory to device memory
-    cudaMemcpy(d_A, A, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, B, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, A, A_elements * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, B, B_elements * sizeof(float), cudaMemcpyHostToDevice);
 
     // Invoke Kernel
     dim3 threadsPerBlock(LBLK, LBLK);
     dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
-    cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, d_A, d_B, d_C);
+    cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, R, d_A, d_B, d_C);
     // cudaDeviceSynchronize();
     // copy result
-    cudaMemcpy(C, d_C, size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Free device memory
     cudaFree(d_A);
@@ -347,6 +348,202 @@ void cuTanh(float *src, float *dst, int length) {
     cudaFree(d_dst);
 }
 
-void cuGruForward() {
+void cu_mat_mul(float* A, float* B, float* C, int M, int N, int R) {
+    // Invoke Kernel
+    dim3 threadsPerBlock(MBLK, MBLK);
+    dim3 blocks(updiv(M, LBLK), updiv(N, LBLK));
+    cudaOptMatMulKernel<<<blocks, threadsPerBlock>>>(M, N, R, A, B, C);
+}
+
+void cu_mat_dot(float *A, float *B, float *C, int M, int N) {
+    int elements = M * N;
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock * elementsPerThread);
+    cudaMatDotKernel<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, elements);
+}
+
+void cu_mat_add(float *src1, float *src2, float *dst, int M, int N)  {
+    int elements = M * N;
+    // Invoke kernel
+    int threadsPerBlock = MBLK;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(elements, threadsPerBlock * elementsPerThread);
+    cudaMatAddKernel<<<blocksPerGrid, threadsPerBlock>>>(src1, src2, dst, elements);
+    // cudaDeviceSynchronize();
+}
+
+void cu_mat_sigmoid(float *src, float *dst, int length) {
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(length, threadsPerBlock * elementsPerThread);
+    cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(src, dst, length);
+}
+
+void cu_mat_tanh(float *src, float *dst, int length) {
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(length, threadsPerBlock * elementsPerThread);
+    cudaSigmoidKernel<<<blocksPerGrid, threadsPerBlock>>>(src, dst, length);
+}
+
+__global__ void cuReverseSign(float* src, float* dst, int length) {
+    int offset = blockDim.x * blockIdx.x + threadIdx.x;
+    if (offset >= length) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < length; i++) {
+        dst[offset + i] = -src[offset + i];
+    }
+}
+
+__global__ void cuSubtract(float* src, float* dst, int length, float num) {
+    int offset = blockDim.x * blockIdx.x + threadIdx.x;
+    if (offset >= length) return;
+    for (int i = 0; i < THREADWORK && (offset + i) < length; i++) {
+        dst[offset + i] = src[offset + i] - num;
+    }
+}
+
+void cu_minus(float* src, float* dst, int length, float num = 0.0) {
+    // Invoke
+    int threadsPerBlock = 1;
+    int elementsPerThread = THREADWORK;
+    int blocksPerGrid = updiv(length, threadsPerBlock * elementsPerThread);
+    if (num == 0.0) {
+        cuReverseSign<<<blocksPerGrid, threadsPerBlock>>>(src, dst, length);    
+    } else {
+        cuSubtract<<<blocksPerGrid, threadsPerBlock>>>(src, dst, length, num);  
+    }
+}
+
+void cu_gru_forward(float *input, float* hiddent, float *output, int i_m, int i_n, int h_m, int h_n) {
+    gru_forward_setup(i_m, i_n, h_m, h_n);
+    // copy input data into GPU
+    // this->h_t_1 = h;
+    cudaMemcpy(h_t_1, hiddent, h_m * h_n * sizeof(float), cudaMemcpyHostToDevice);
+    // this->x = x;
+    cudaMemcpy(x, input, i_m * i_n * sizeof(float), cudaMemcpyHostToDevice);
+
+    // allocate tmp values
+    int d = i_m;
+    int h = h_m;
+    __device__ float tmp1[h * i_n];
+    __device__ float tmp2[h * i_n];
+    __device__ float tmp3[h * i_n];
+    __device__ float tmp4[h * i_n];
+    __device__ float tmp5[h * i_n];
+    __device__ float mid_res1[h * i_n];
+    __device__ float mid_res2[h * i_n];
+    __device__ float mid_res3[h * i_n];
+    __device__ float mid_res4[h * i_n];
+
+    // gru_mat_setup(&tmp1, h, i_n, false);
+    // gru_mat_setup(&tmp2, h, i_n, false);
+    // gru_mat_setup(&tmp3, h, i_n, false);
+    // gru_mat_setup(&tmp4, h, i_n, false);
+    // gru_mat_setup(&tmp5, h, i_n, false);
+    // gru_mat_setup(&mid_res1, h, i_n, false);
+    // gru_mat_setup(&mid_res2, h, i_n, false);
+    // gru_mat_setup(&mid_res3, h, i_n, false);
+    // gru_mat_setup(&mid_res4, h, i_n, false);
+
+    // forward process
+    // auto tmp1 = this->Wzx.mul(x);
+    // auto tmp2 = this->Wrx.mul(x);
+    cu_mat_mul(Wzx, x, tmp1, h, d, i_n);
+    cu_mat_mul(Wrx, x, tmp2, h, d, i_n);
+    cudaDeviceSynchronize();
+
+    // this->z_t = this->z_act.forward(this->Wzh.mul(h_t_1).add(tmp1));
+    // this->r_t = this->r_act.forward(this->Wrh.mul(h_t_1).add(tmp2));
+    cu_mat_mul(Wzh, h_t_1, mid_res1, h, h, i_n);
+    cu_mat_mul(Wrh, h_t_1, mid_res2, h, h, i_n);
+    cu_mat_add(mid_res1, tmp1, mid_res3, h, i_n);
+    cu_mat_add(mid_res2, tmp2, mid_res4, h, i_n);
+    cu_mat_sigmoid(mid_res3, z_t, h * i_n);
+    cu_mat_sigmoid(mid_res4, r_t, h * i_n);
+
+    // auto tmp3 = this->r_t.dot(h_t_1);
+    cu_mat_dot(r_t, h_t_1, tmp3, h, i_n);
+    // auto tmp4 = this->Wx.mul(x);
+    cu_mat_mul(Wx, x, tmp4, h, d,i_n);
+    // this->h_bar_t = this->h_act.forward(this->Wh.mul(tmp3).add(tmp4));
+    cu_mat_mul(Wh, tmp3, mid_res1, h, h, i_n);
+    cu_mat_add(mid_res1, tmp4, mid_res3, h, i_n);
+    cu_mat_sigmoid(mid_res3, h_bar_t, h * i_n);
+    // auto tmp5 = this->z_t.dot(this->h_bar_t);
+    cu_mat_dot(z_t, h_bar_t, tmp5, h, i_n);
+    // this->h_t = (-this->z_t + 1.0).dot(this->h_t_1).add(tmp5);
+    cu_minus(z_t, mid_res2, h * i_n);
+    cu_minus(mid_res2, mid_res4, h * i_n, -1.0);
+    cu_mat_dot(z_t, h_t_1, mid_res1, h, i_n);
+    cu_mat_add(mid_res1, tmp5, h_t, h, i_n);
+
+    // copy result out
+    cudaMemcpy(output, h_t, h * i_n * sizeof(float), cudaMemcpyDeviceToHost);
+    gru_forward_clear();
+    cudaFree(tmp1);
+    cudaFree(tmp2);
+    cudaFree(tmp3);
+    cudaFree(tmp4);
+    cudaFree(tmp5);
+    cudaFree(mid_res1);
+    cudaFree(mid_res2);
+    cudaFree(mid_res3);
+    cudaFree(mid_res4);
+}
+
+void gru_forward_setup(int i_m, int i_n, int h_m, int h_n) {
+    int d = i_m;
+    int h = h_m;
+
+    // cudaMalloc(&h_t_1, mat_size);
+    gru_mat_setup(&h_t_1, h_m, h_n, false);
     
+    // cudaMalloc(&x, mat_size);
+    gru_mat_setup(&x, i_m, i_n, false);
+
+    // cudaMalloc(&Wzx, mat_size);
+    gru_mat_setup(&Wzx, h, d, true);
+    
+    // cudaMalloc(&Wrx, mat_size);
+    gru_mat_setup(&Wrx, h, d, true);
+    
+    // cudaMalloc(&Wzh, mat_size);
+    gru_mat_setup(&Wzh, h, h, true);
+    
+    // cudaMalloc(&Wrh, mat_size);
+    gru_mat_setup(&Wrh, h, h, true);
+
+    // cudaMalloc(&Wx, mat_size);
+    gru_mat_setup(&Wx, h, d, true);
+
+    // cudaMalloc(&z_t, sizeof(Mat));
+    gru_mat_setup(&z_t, h, i_n, false);
+
+    // cudaMalloc(&r_t, sizeof(Mat));
+    gru_mat_setup(&r_t, h, i_n, false);
+
+    // cudaMalloc(&h_bar_t, sizeof(Mat));
+    gru_mat_setup(&h_bar_t, h, i_n, false);
+}
+
+void gru_mat_setup(float** ptr, int m, int n, bool init) {
+    if (!init) return;
+    /* initialize */
+    cudaMemset(ptr, 0, m * n * sizeof(float));
+}
+
+void gru_forward_clear() {
+    cudaFree(h_t_1);
+    cudaFree(x);
+    cudaFree(Wzx);
+    cudaFree(Wzh);
+    cudaFree(Wrh);
+    cudaFree(Wx);
+    cudaFree(z_t);
+    cudaFree(h_t_1);
+    cudaFree(h_bar_t);
 }
