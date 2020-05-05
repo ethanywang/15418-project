@@ -1,5 +1,7 @@
 # 15418/618 Final Project - Parallel Recurrent Neural Network
 
+This is the code for the CMU course 15418/618 final projects, which aims to explore different parallelization technologies on the RNN problem scope.
+
 ### Requirement
 
 - CMake >= 3.8
