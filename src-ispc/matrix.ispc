@@ -26,11 +26,33 @@ export void veclinear_ispc(uniform float input[], uniform float a, uniform float
     }
 }
 
+#define BLOCK_WIDTH 100
+#define BLOCK_HEIGHT 100
+
+task void matT_ispc_task(uniform float input[], uniform int M,
+                      uniform int N, uniform float output[]) {
+    uniform int bstride = (N + BLOCK_WIDTH - 1) / BLOCK_WIDTH;
+
+    uniform int ystart = (taskIndex % bstride) * BLOCK_WIDTH;
+    uniform int yend = min(ystart + BLOCK_WIDTH, N);
+    uniform int xstart = (taskIndex / bstride) * BLOCK_HEIGHT;
+    uniform int xend = min(xstart + BLOCK_HEIGHT, M);
+
+    foreach (j = ystart... yend, i = xstart... xend) {
+       output[j * M + i] = input[i * N + j];
+    }
+}
+
 export void matT_ispc(uniform float input[], uniform int M,
                       uniform int N, uniform float output[]) {
-    foreach(j = 0 ... N, i = 0 ... M) {
-        output[j * M + i] = input[i * N + j];
-    }
+    // foreach(j = 0 ... N, i = 0 ... M) {
+    //    output[j * M + i] = input[i * N + j];
+    // }
+    uniform int bWidthstride = (N + BLOCK_WIDTH - 1) / BLOCK_WIDTH;
+    uniform int bHeightstride = (M + BLOCK_HEIGHT - 1) / BLOCK_HEIGHT;
+    uniform int taskCount = bWidthstride * bHeightstride;
+
+    launch[taskCount] matT_ispc_task(input, M, N, output);
 }
 
 export void matmul_ispc(uniform float input1[], uniform float input2[],
