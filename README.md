@@ -27,3 +27,6 @@ make
 ```
 
 Note on GHC machines, cmake with version 3.+ is named `cmake3`.
+
+### Benchmarking
+Run `make bench` command will directly start benchmarking.
