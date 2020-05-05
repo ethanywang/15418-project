@@ -389,29 +389,29 @@ BENCHMARK_DEFINE_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)(benchmark::State& sta
 }
 
 // Register the function as a benchmark
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_10x10)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_100x100)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_1000x1000)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_10x10)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_100x100)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_1000x1000)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_10x10)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_100x100)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_1000x1000)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_1000x1000)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b1)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b8)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b16)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b32)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b64)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b128)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b1)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b8)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b16)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b32)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b64)->UseManualTime();
-BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)->UseManualTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_10x10)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_100x100)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatDot_1000x1000)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_10x10)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_100x100)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatAdd_1000x1000)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_10x10)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_100x100)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatMul_1000x1000)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_1000x1000)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b1)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b8)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b16)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b32)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b64)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_10x10_b128)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b1)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b8)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b16)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b32)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b64)->UseManualTime()->UseRealTime();
+BENCHMARK_REGISTER_F(CUDAFixture, BM_CUDA_MatT_100x100_b128)->UseManualTime()->UseRealTime();
 
 BENCHMARK_MAIN();

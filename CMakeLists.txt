@@ -37,6 +37,7 @@ add_subdirectory(lib/googletest)
 # source
 add_subdirectory(src-seq)
 add_subdirectory(src-thread)
+add_subdirectory(src-openmp)
 add_subdirectory(src-cuda)
 add_subdirectory(src-ispc)
 # QA
