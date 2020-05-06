@@ -13,6 +13,7 @@
 static void BM_SEQ_MatDot_10x10(benchmark::State& state) {
     Matrix m1(10, 10);
     Matrix m2(10, 10);
+
     for (auto _ : state) {
         m1.dot(m2);
     }
@@ -107,7 +108,7 @@ static void BM_SEQ_MatT_1000x1000(benchmark::State& state) {
 }
 
 /* GRU - 10x10 */
-static void BM_SEQ_MatT_10x10_b1(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b1(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 1);
     Matrix h(10, 1);
@@ -117,7 +118,7 @@ static void BM_SEQ_MatT_10x10_b1(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_10x10_b8(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b8(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 8);
     Matrix h(10, 8);
@@ -127,7 +128,7 @@ static void BM_SEQ_MatT_10x10_b8(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_10x10_b16(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b16(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 16);
     Matrix h(10, 16);
@@ -137,7 +138,7 @@ static void BM_SEQ_MatT_10x10_b16(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_10x10_b32(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b32(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 32);
     Matrix h(10, 32);
@@ -147,7 +148,7 @@ static void BM_SEQ_MatT_10x10_b32(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_10x10_b64(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b64(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 64);
     Matrix h(10, 64);
@@ -157,7 +158,7 @@ static void BM_SEQ_MatT_10x10_b64(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_10x10_b128(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_10x10_b128(benchmark::State& state) {
     GRU gru(10, 10);
     Matrix input_x(10, 128);
     Matrix h(10, 128);
@@ -168,7 +169,7 @@ static void BM_SEQ_MatT_10x10_b128(benchmark::State& state) {
 }
 
 /* GRU - 100x100 */
-static void BM_SEQ_MatT_100x100_b1(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b1(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 1);
     Matrix h(100, 1);
@@ -178,7 +179,7 @@ static void BM_SEQ_MatT_100x100_b1(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_100x100_b8(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b8(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 8);
     Matrix h(100, 8);
@@ -188,7 +189,7 @@ static void BM_SEQ_MatT_100x100_b8(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_100x100_b16(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b16(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 16);
     Matrix h(100, 16);
@@ -198,7 +199,7 @@ static void BM_SEQ_MatT_100x100_b16(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_100x100_b32(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b32(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 32);
     Matrix h(100, 32);
@@ -208,7 +209,7 @@ static void BM_SEQ_MatT_100x100_b32(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_100x100_b64(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b64(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 64);
     Matrix h(100, 64);
@@ -218,7 +219,7 @@ static void BM_SEQ_MatT_100x100_b64(benchmark::State& state) {
     }
 }
 
-static void BM_SEQ_MatT_100x100_b128(benchmark::State& state) {
+static void BM_SEQ_GRU_Forward_100x100_b128(benchmark::State& state) {
     GRU gru(100, 100);
     Matrix input_x(100, 128);
     Matrix h(100, 128);
@@ -229,29 +230,34 @@ static void BM_SEQ_MatT_100x100_b128(benchmark::State& state) {
 }
 
 // Register the function as a benchmark
-BENCHMARK(BM_SEQ_MatDot_10x10)->UseRealTime();
-BENCHMARK(BM_SEQ_MatDot_100x100)->UseRealTime();
-BENCHMARK(BM_SEQ_MatDot_1000x1000)->UseRealTime();
-BENCHMARK(BM_SEQ_MatAdd_10x10)->UseRealTime();
-BENCHMARK(BM_SEQ_MatAdd_100x100)->UseRealTime();
-BENCHMARK(BM_SEQ_MatAdd_1000x1000)->UseRealTime();
-BENCHMARK(BM_SEQ_MatMul_10x10)->UseRealTime();
-BENCHMARK(BM_SEQ_MatMul_100x100)->UseRealTime();
-BENCHMARK(BM_SEQ_MatMul_1000x1000)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_1000x1000)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b1)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b8)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b16)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b32)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b64)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_10x10_b128)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b1)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b8)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b16)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b32)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b64)->UseRealTime();
-BENCHMARK(BM_SEQ_MatT_100x100_b128)->UseRealTime();
+// dot
+BENCHMARK(BM_SEQ_MatDot_10x10);
+BENCHMARK(BM_SEQ_MatDot_100x100);
+BENCHMARK(BM_SEQ_MatDot_1000x1000);
+// add
+BENCHMARK(BM_SEQ_MatAdd_10x10);
+BENCHMARK(BM_SEQ_MatAdd_100x100);
+BENCHMARK(BM_SEQ_MatAdd_1000x1000);
+// mul
+BENCHMARK(BM_SEQ_MatMul_10x10);
+BENCHMARK(BM_SEQ_MatMul_100x100);
+BENCHMARK(BM_SEQ_MatMul_1000x1000);
+// transpose
+BENCHMARK(BM_SEQ_MatT_10x10);
+BENCHMARK(BM_SEQ_MatT_100x100);
+BENCHMARK(BM_SEQ_MatT_1000x1000);
+// gru forward
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b1);
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b8);
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b16);
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b32);
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b64);
+BENCHMARK(BM_SEQ_GRU_Forward_10x10_b128);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b1);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b8);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b16);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b32);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b64);
+BENCHMARK(BM_SEQ_GRU_Forward_100x100_b128);
 
 BENCHMARK_MAIN();
