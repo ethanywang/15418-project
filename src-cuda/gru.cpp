@@ -1,12 +1,18 @@
 //
 // Created by yuwang4 on 2020-04-21.
 //
+#define COMBINE
 #include "gru.h"
 #include "cuda_operator.h"
 
 Matrix GRU::forward(Matrix &x, Matrix &h) {
     float* _data = new float[h.size(0) * x.size(1)];
+    #ifdef SEP
     cu_gru_forward(x.data(), h.data(), _data, x.size(0), x.size(1), h.size(0), h.size(1));
+    #endif
+    #ifdef COMBINE
+    cu_gru_forward_combine(x.data(), h.data(), _data, x.size(0), x.size(1), h.size(0), h.size(1));
+    #endif
     // this->h_t_1 = h;
     // this->x = x;
 
