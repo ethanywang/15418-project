@@ -420,6 +420,82 @@ void cu_minus(float* src, float* dst, int length, float num = 0.0) {
     }
 }
 
+void cu_gru_forward_combine(float *input, float* hiddent, float *output, int i_m, int i_n, int h_m, int h_n) {
+    int d = i_m;
+    int h = h_m;
+    gru_combined_forward_setup(i_m, i_n, h_m, h_n);
+    float* tmp1_tmp2;
+    float* tmp3;
+    float* tmp4;
+    float* mid_res1;
+    float* mid_res2;
+    float* mid_res3;
+    float* mid_res4;
+
+    gru_mat_setup(&tmp1_tmp2, h * 2, i_n, false);
+    gru_mat_setup(&tmp3, h, i_n, false);
+    gru_mat_setup(&tmp4, h, i_n, false);
+    gru_mat_setup(&mid_res1, h * 2, i_n, false);
+    gru_mat_setup(&mid_res2, h, i_n, false);
+    gru_mat_setup(&mid_res3, h, i_n, false);
+    gru_mat_setup(&mid_res4, h, i_n, false);
+
+    // this->h_t_1 = h;
+    // this->x = x;
+    cudaMemcpy(h_t_1, hiddent, h_m * h_n * sizeof(float), cudaMemcpyHostToDevice);
+    // this->x = x;
+    cudaMemcpy(x, input, i_m * i_n * sizeof(float), cudaMemcpyHostToDevice);
+
+    // auto tmp1 = this->Wzx.mul(x);
+    // auto tmp2 = this->Wrx.mul(x);
+    cu_mat_mul(Wzx_Wrx, x, tmp1_tmp2, h * 2, d, i_n);
+
+    // this->z_t = this->z_act.forward(this->Wzh.mul(h_t_1).add(tmp1));
+    // this->r_t = this->r_act.forward(this->Wrh.mul(h_t_1).add(tmp2));
+    cu_mat_mul(Wzh_Wrh, h_t_1, mid_res1, h * 2, h, i_n);
+    cu_mat_add(mid_res1, tmp1_tmp2, mid_res2, h * 2, i_n);
+    cu_mat_sigmoid(mid_res2, z_t_r_t, 2 * h * i_n);
+    
+    // auto tmp3 = this->r_t.dot(h_t_1);
+    // auto tmp4 = this->Wx.mul(x);
+    // this->h_bar_t = this->h_act.forward(this->Wh.mul(tmp3).add(tmp4));
+    cu_mat_dot(z_t_r_t + h * i_n, h_t_1, tmp3, h, i_n);
+    cu_mat_mul(Wx, x, tmp4, h, d, i_n);
+    cu_mat_mul(Wh, tmp3, mid_res3, h, d, i_n);
+    cu_mat_add(mid_res3, tmp4, mid_res4, h, i_n);
+
+    cu_mat_sigmoid(mid_res4, h_bar_t, h * i_n);
+    // auto tmp5 = this->z_t.dot(this->h_bar_t);
+    cudaDeviceSynchronize();
+    cu_mat_dot(z_t_r_t, h_bar_t, tmp4, h , i_n);
+
+    // this->h_t = (-this->z_t + 1.0).dot(this->h_t_1).add(tmp5);
+    cu_minus(z_t_r_t, mid_res1, h * i_n);
+    cu_minus(mid_res1, mid_res2, h * i_n, -1.0);
+    cu_mat_dot(z_t_r_t, h_t_1, mid_res3, h, i_n);
+    cu_mat_add(mid_res3, tmp4, h_t, h, i_n);
+
+    // copy result out
+    cudaMemcpy(output, h_t, h * i_n * sizeof(float), cudaMemcpyDeviceToHost);
+}
+
+void gru_combined_forward_setup(int i_m, int i_n, int h_m, int h_n) {
+    int d = i_m;
+    int h = h_m;
+
+    gru_mat_setup(&h_t_1, h_m, h_n, false);
+    gru_mat_setup(&x, i_m, i_n, false);
+    gru_mat_setup(&h_t, h, i_n, false);
+
+    gru_mat_setup(&Wzx_Wrx, h * 2, d, false);
+    gru_mat_setup(&Wzh_Wrh, h * 2, h, false);
+    gru_mat_setup(&z_t_r_t, h * 2, i_n, false);
+
+    gru_mat_setup(&Wx, h, d, true);
+    gru_mat_setup(&Wh, h, d, true);
+    gru_mat_setup(&h_bar_t, h, i_n, false);
+}
+
 void cu_gru_forward(float *input, float* hiddent, float *output, int i_m, int i_n, int h_m, int h_n) {
     gru_forward_setup(i_m, i_n, h_m, h_n);
     // copy input data into GPU
@@ -510,34 +586,21 @@ void gru_forward_setup(int i_m, int i_n, int h_m, int h_n) {
     int d = i_m;
     int h = h_m;
 
-    // cudaMalloc(&h_t_1, mat_size);
     gru_mat_setup(&h_t_1, h_m, h_n, false);
-    
-    // cudaMalloc(&x, mat_size);
     gru_mat_setup(&x, i_m, i_n, false);
 
-    // cudaMalloc(&Wzx, mat_size);
     gru_mat_setup(&Wzx, h, d, true);
-    
-    // cudaMalloc(&Wrx, mat_size);
     gru_mat_setup(&Wrx, h, d, true);
     
-    // cudaMalloc(&Wzh, mat_size);
     gru_mat_setup(&Wzh, h, h, true);
-    
-    // cudaMalloc(&Wrh, mat_size);
     gru_mat_setup(&Wrh, h, h, true);
 
-    // cudaMalloc(&Wx, mat_size);
     gru_mat_setup(&Wx, h, d, true);
+    gru_mat_setup(&Wh, h, d, true);
 
-    // cudaMalloc(&z_t, sizeof(Mat));
     gru_mat_setup(&z_t, h, i_n, false);
-
-    // cudaMalloc(&r_t, sizeof(Mat));
     gru_mat_setup(&r_t, h, i_n, false);
-
-    // cudaMalloc(&h_bar_t, sizeof(Mat));
+    gru_mat_setup(&h_t, h, i_n, false);
     gru_mat_setup(&h_bar_t, h, i_n, false);
 }
 
@@ -557,6 +620,6 @@ void gru_forward_clear() {
     cudaFree(Wrh);
     cudaFree(Wx);
     cudaFree(z_t);
-    cudaFree(h_t_1);
+    cudaFree(h_t);
     cudaFree(h_bar_t);
 }

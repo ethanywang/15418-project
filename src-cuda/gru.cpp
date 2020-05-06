@@ -1,7 +1,6 @@
 //
 // Created by yuwang4 on 2020-04-21.
 //
-
 #include "gru.h"
 #include "cuda_operator.h"
 

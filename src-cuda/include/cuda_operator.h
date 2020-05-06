@@ -26,6 +26,10 @@ void cuAddition(float *src, float *dst, int length, const float &num);
 
 void cu_gru_forward(float *input, float *h, float *output, int input_m, int input_n, int h_m, int h_n);
 
+void cu_gru_forward_combine(float *input, float* hiddent, float *output, int i_m, int i_n, int h_m, int h_n);
+
+void gru_combined_forward_setup(int i_m, int i_n, int h_m, int h_n);
+
 void gru_forward_setup(int d, int h);
 
 void gru_forward_clear();
