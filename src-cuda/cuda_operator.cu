@@ -4,7 +4,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <driver_functions.h>
-
 #include <iostream>
 #define RINDEX(r, c, width) (r * width + c)
 #define MBLK 4
