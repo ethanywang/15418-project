@@ -75,6 +75,7 @@ __global__ void cudaTanhKernel(float *src, float *dst, int length) {
 }
 
 // matrix multiplication
+// citation: modified from example code in http://www.cs.cmu.edu/~418/lectures/rec_02.pdf
 __global__ void cudaSimpleMatMulKernel(int M, int N, float *dmatA, float *dmatB, float *dmatC) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
@@ -170,6 +171,7 @@ __global__ void cudaOptBlockedMatMulKernel(int M, int N, float *dmatA, float *dm
     }
     dmatC[RINDEX(i,j,N)] = sum;
 }
+// end citation
 
 void cuAdd(float *src1, float *src2, float *dst, int M, int N) {
     // std::cout << "cuAdd()\n";
@@ -347,6 +349,7 @@ void cuTanh(float *src, float *dst, int length) {
     cudaFree(d_dst);
 }
 
+// Operations for Network Unit
 void cu_mat_mul(float* A, float* B, float* C, int M, int N, int R) {
     // Invoke Kernel
     dim3 threadsPerBlock(MBLK, MBLK);
