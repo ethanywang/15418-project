@@ -4,6 +4,8 @@
 
 #include "gru.h"
 
+#include <iostream>
+
 Matrix GRU::forward(Matrix &x, Matrix &h) {
     auto tmp1 = std::move(this->Wzx.mul(x));
     auto tmp2 = std::move(this->Wrx.mul(x));

@@ -80,7 +80,9 @@ Matrix Matrix::T() {
     if (_size == 0) {
         return Matrix();
     }
-    auto *data = new float[this->_size];
+    // auto *data = new float[this->_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
     auto M = _N;
     auto N = _M;
 
@@ -98,7 +100,9 @@ Matrix Matrix::add(Matrix &d) {
     assert(_N == d._N);
 
     // seq
-    auto *data = new float[_size];
+    // auto *data = new float[_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < _N; j++) {
@@ -117,7 +121,9 @@ Matrix Matrix::dot(Matrix &d) {
     assert(_M == d._M);
     assert(_N == d._N);
 
-    auto *data = new float[_size];
+    // auto *data = new float[_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < _N; j++) {
@@ -134,7 +140,9 @@ Matrix Matrix::mul(Matrix &d) {
     assert(_N == d._M);
 
     /* do calculation */
-    auto *data = new float[_M * d._N];
+    // auto *data = new float[_M * d._N];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < d._N; j++) {
@@ -155,26 +163,35 @@ float *Matrix::data() {
 }
 
 Matrix Matrix::operator-() {
-    auto *data = new float[_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
+
     for (int i = 0; i < _size; i++) {
         data[i] = -_data[i];
     }
+
     return Matrix(data, _M, _N);
 }
 
 Matrix Matrix::operator-(const float &num) {
-    auto *data = new float[_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
+
     for (int i = 0; i < _size; i++) {
         data[i] = _data[i] - num;
     }
+
     return Matrix(data, _M, _N);
 }
 
 Matrix Matrix::operator+(const float &num) {
-    auto *data = new float[_size];
+    float *data;
+    cudaMallocManaged((void**)&data, _size * sizeof(float));
+
     for (int i = 0; i < _size; i++) {
         data[i] = data[i] + num;
     }
+
     return Matrix(data, _M, _N);
 }
 
