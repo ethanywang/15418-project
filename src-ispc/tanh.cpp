@@ -14,6 +14,5 @@ Matrix Tanh::forward(Matrix m) {
 
     ispc::tanh_ispc(_data, m.size(), __data);
 
-    _res = Matrix(__data, m.size(0), m.size(1));
-    return _res;}
+    return std::move(Matrix(__data, m.size(0), m.size(1)));}
 

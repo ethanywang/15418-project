@@ -12,11 +12,8 @@ public:
     Matrix forward(Matrix);
 
     Matrix operator()(const Matrix &mat) {
-        return this->forward(mat);
+        return std::move(this->forward(mat));
     }
-
-private:
-    Matrix _res;
 };
 
 

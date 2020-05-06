@@ -8,42 +8,22 @@
 #include <random>
 #include <cassert>
 #include <cstring>
-#include <string>
+
+
 
 #define THREAD_NUM 8
 
 class Matrix {
 public:
-    Matrix() : _data(nullptr), _M(0), _N(0), _size(0) {};
+    Matrix();
 
-    Matrix(int M, int N, bool zero = true) : _M(M), _N(N), _size(M * N) {
-        assert(M > 0);
-        assert(N > 0);
-        _data = new float[_size]();
-        if (!zero) {
-            for (int i = 0; i < _size; i++) {
-                _data[i] = static_cast<float>(_rd());
-            }
-        }
-    }
+    Matrix(int M, int N, bool zero = true);
 
-    Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
-        assert(data != nullptr);
-        assert(M > 0);
-        assert(N > 0);
-    };
+    Matrix(float *data, int M, int N);
 
-    Matrix(const Matrix &m) {
-        _M = m._M;
-        _N = m._N;
-        _size = m._size;
-        _data = new float[m._size];
-        memcpy(_data, m._data, m._size * sizeof(float));
-    }
+    Matrix(const Matrix &m);
 
-    ~Matrix() {
-        delete[] _data;
-    };
+    ~Matrix();
 
     Matrix operator-();
 
@@ -51,7 +31,7 @@ public:
 
     Matrix operator+(const float &);
 
-    Matrix &operator=(const Matrix &);
+    Matrix &operator=(Matrix &&) noexcept;
 
     int size();
 

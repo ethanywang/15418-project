@@ -23,12 +23,6 @@ public:
               Wzx(h, d, false),
               Wrx(h, d, false),
               Wx(h, d, false),
-              dWzh(h, h),
-              dWrh(h, h),
-              dWh(h, h),
-              dWzx(h, d),
-              dWrx(h, d),
-              dWx(h, d),
               z_act(),
               r_act(),
               h_act() {};
@@ -49,25 +43,9 @@ private:
     Matrix Wrx;
     Matrix Wx;
 
-    Matrix dWzh;
-    Matrix dWrh;
-    Matrix dWh;
-
-    Matrix dWzx;
-    Matrix dWrx;
-    Matrix dWx;
-
     Sigmoid z_act;
     Sigmoid r_act;
     Tanh h_act;
-
-    /* Tmp Saving */
-    Matrix h_t_1;
-    Matrix x;
-    Matrix z_t;
-    Matrix r_t;
-    Matrix h_bar_t;
-    Matrix h_t;
 };
 
 #endif  // RNN_GRU_H

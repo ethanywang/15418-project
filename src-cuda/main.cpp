@@ -4,7 +4,6 @@
 #include <iostream>
 
 int main(int argc, char **argv) {
-    std::cout << "running parallel in CUDA\n";
     GRU gru(10, 20);
     Matrix input_x(10, 1);
     Matrix h(20, 1);

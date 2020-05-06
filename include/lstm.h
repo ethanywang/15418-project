@@ -55,16 +55,6 @@ private:
     Sigmoid o_act;
     Tanh c_bar_act;
     Tanh c_act;
-
-    Matrix f_t;
-    Matrix i_t;
-    Matrix x;
-    Matrix o_t;
-    Matrix c_bar_t;
-    Matrix h_t;
-    Matrix h_t_1;
-    Matrix c_t;
-    Matrix c_t_1;
 };
 
 #endif //RNN_LSTM_H
