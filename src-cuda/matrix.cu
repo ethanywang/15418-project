@@ -57,6 +57,8 @@ Matrix &Matrix::operator=(Matrix &&m) noexcept {
     this->_N = m._N;
     this->_size = m._size;
     
+    m._data = nullptr;
+    
     return *this;
 }
 
@@ -153,7 +155,7 @@ Matrix Matrix::mul(Matrix &d) {
     //         }
     //     }
     // }
-    cuMul(_data, d._data, data, _M, d._N);
+    cuMul(_data, d._data, data, _M, d._N, _N);
     /* allocate new data */
     return Matrix(data, _M, d._N);
 }
@@ -166,9 +168,10 @@ Matrix Matrix::operator-() {
     float *data;
     cudaMallocManaged((void**)&data, _size * sizeof(float));
 
-    for (int i = 0; i < _size; i++) {
-        data[i] = -_data[i];
-    }
+    // for (int i = 0; i < _size; i++) {
+    //     data[i] = -_data[i];
+    // }
+    cuNumMinus(_data, data, _size, 0);
 
     return Matrix(data, _M, _N);
 }
@@ -177,9 +180,10 @@ Matrix Matrix::operator-(const float &num) {
     float *data;
     cudaMallocManaged((void**)&data, _size * sizeof(float));
 
-    for (int i = 0; i < _size; i++) {
-        data[i] = _data[i] - num;
-    }
+    // for (int i = 0; i < _size; i++) {
+    //     data[i] = _data[i] - num;
+    // }
+    cuNumMinus(_data, data, _size, num);
 
     return Matrix(data, _M, _N);
 }
@@ -188,9 +192,10 @@ Matrix Matrix::operator+(const float &num) {
     float *data;
     cudaMallocManaged((void**)&data, _size * sizeof(float));
 
-    for (int i = 0; i < _size; i++) {
-        data[i] = data[i] + num;
-    }
+    // for (int i = 0; i < _size; i++) {
+    //     data[i] = data[i] + num;
+    // }
+    cuNumAdd(_data, data, _size, num);
 
     return Matrix(data, _M, _N);
 }

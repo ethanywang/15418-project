@@ -5,7 +5,7 @@ set(CMAKE_CUDA_FLAGS_DEBUG "-O3")
 
 # compile CUDA library
 add_library(libcuda STATIC
-    gru.cpp 
+    gru.cu
     sigmoid.cu 
     tanh.cu 
     matrix.cu 
