@@ -18,12 +18,12 @@ Matrix::Matrix(int M, int N, bool zero) : _M(M), _N(N), _size(M * N) {
     assert(N > 0);
 
     // _data = new float[m._size];
-    cudaMallocManaged((void**)&_data, _size * sizeof(float));
-    if (!zero) {
-        for (int i = 0; i < _size; i++) {
-            _data[i] = static_cast<float>(_rd());
-        }
-    }
+    cudaMalloc((void**)&_data, _size * sizeof(float));
+    // if (!zero) {
+    //     for (int i = 0; i < _size; i++) {
+    //         _data[i] = static_cast<float>(_rd());
+    //     }
+    // }
 }
 
 Matrix::Matrix(float *data, int M, int N) : _data(data), _M(M), _N(N), _size(M * N) {
@@ -37,8 +37,9 @@ Matrix::Matrix(const Matrix &m) {
     _N = m._N;
     _size = m._size;
     // _data = new float[m._size];
-    cudaMallocManaged((void**)&_data, _size * sizeof(float));
-    memcpy(_data, m._data, m._size * sizeof(float));
+    cudaMalloc((void**)&_data, _size * sizeof(float));
+    // memcpy(_data, m._data, m._size * sizeof(float));
+    cudaMemcpy(_data, m._data, _size * sizeof(float), cudaMemcpyDeviceToDevice);
 }
 
 Matrix::~Matrix() {
@@ -84,15 +85,16 @@ Matrix Matrix::T() {
     }
     // auto *data = new float[this->_size];
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
     auto M = _N;
     auto N = _M;
 
-    for (int i = 0; i < _M; i++) {
-        for (int j = 0; j < _N; j++) {
-            data[j * _M + i] = this->_data[i * _N + j];
-        }
-    }
+    // for (int i = 0; i < _M; i++) {
+    //     for (int j = 0; j < _N; j++) {
+    //         data[j * _M + i] = this->_data[i * _N + j];
+    //     }
+    // }
+    cuT(_data, data, _M, _N);
 
     return Matrix(data, M, N);
 }
@@ -104,7 +106,7 @@ Matrix Matrix::add(Matrix &d) {
     // seq
     // auto *data = new float[_size];
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < _N; j++) {
@@ -125,7 +127,7 @@ Matrix Matrix::dot(Matrix &d) {
 
     // auto *data = new float[_size];
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < _N; j++) {
@@ -144,7 +146,7 @@ Matrix Matrix::mul(Matrix &d) {
     /* do calculation */
     // auto *data = new float[_M * d._N];
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
     // if (this->_dev == SEQ) {
     //     for (int i = 0; i < _M; i++) {
     //         for (int j = 0; j < d._N; j++) {
@@ -166,7 +168,7 @@ float *Matrix::data() {
 
 Matrix Matrix::operator-() {
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
 
     // for (int i = 0; i < _size; i++) {
     //     data[i] = -_data[i];
@@ -178,7 +180,7 @@ Matrix Matrix::operator-() {
 
 Matrix Matrix::operator-(const float &num) {
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
 
     // for (int i = 0; i < _size; i++) {
     //     data[i] = _data[i] - num;
@@ -190,7 +192,7 @@ Matrix Matrix::operator-(const float &num) {
 
 Matrix Matrix::operator+(const float &num) {
     float *data;
-    cudaMallocManaged((void**)&data, _size * sizeof(float));
+    cudaMalloc((void**)&data, _size * sizeof(float));
 
     // for (int i = 0; i < _size; i++) {
     //     data[i] = data[i] + num;

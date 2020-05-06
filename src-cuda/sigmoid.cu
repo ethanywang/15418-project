@@ -12,7 +12,7 @@
 Matrix Sigmoid::forward(Matrix m) {
     // auto *__data = new float[];
     float *__data;
-    cudaMallocManaged((void**)&__data, m.size() * sizeof(float));
+    cudaMalloc((void**)&__data, m.size() * sizeof(float));
 
     float *_data = m.data();
     // if (m._dev == SEQ) {
