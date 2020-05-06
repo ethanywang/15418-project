@@ -14,5 +14,6 @@ int main(int argc, char **argv) {
     Matrix c0(20, 1);
     Matrix c1(20, 1);
     Matrix output2 = lstm.forward(input_x, h, c0, c1);
+    Matrix m3 = input_x.T();
     return 0;
 }

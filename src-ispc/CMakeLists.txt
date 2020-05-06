@@ -43,12 +43,14 @@ set(CXX_SOURCES
     matrix.cpp
     sigmoid.cpp
     tanh.cpp
+    tasksys.cpp
 )
 
 # add the executable
 add_executable(rnn-ispc main.cpp ${ALL_ISPC_BUILD_OUTPUTS} ${ALL_ISPC_SRC_NAMES})
 target_sources(rnn-ispc PRIVATE ${CXX_SOURCES})
 target_include_directories(rnn-ispc PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(rnn-ispc pthread)
 
 # export to library
 add_library(libispc STATIC

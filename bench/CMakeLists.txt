@@ -35,6 +35,7 @@ add_executable(rnn-ispc-bench ispc_bench.cpp)
 target_link_libraries(rnn-ispc-bench
         benchmark::benchmark
         libispc
+        pthread
 )
 
 # add "make bench"
