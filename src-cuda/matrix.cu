@@ -39,6 +39,7 @@ Matrix::Matrix(const Matrix &m) {
     // _data = new float[m._size];
     cudaMalloc((void**)&_data, _size * sizeof(float));
     // memcpy(_data, m._data, m._size * sizeof(float));
+    cudaMemcpy(_data, m._data, _size * sizeof(float), cudaMemcpyDeviceToDevice);
 }
 
 Matrix::~Matrix() {
